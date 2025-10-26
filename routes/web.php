@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\ScheduleController;
 
 // Route::get('/', function () {
 //     return Inertia::render('welcome', [
@@ -19,5 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
+
+Route::get('/lich-lam-viec', [ScheduleController::class, 'index'])->name('QuanLyLichLamViec.index');
 
 require __DIR__.'/settings.php';
