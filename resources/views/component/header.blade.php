@@ -4,10 +4,16 @@
            display: inline-flex;
            align-items: center;
        }
+
+       .mt-25 {
+           margin-top: 100px;
+        }
    </style>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm p-0 fixed-top">
        <div class="container-fluid">
-           <a class="navbar-brand" href="#">
+           <a class="navbar-brand" href="{{ route('home') }}">
                <img src="pic/logo1.jpg" alt="logo" width="65px" height="100%">
                DTN DENTAL CLINIC
            </a>
@@ -29,7 +35,7 @@
                            <i class="bi bi-caret-down-fill ms-1 align-middle"></i>
                        </a>
                    </li>
-                   <li class="nav-item">
+                   <li class="nav-item me-2">
                        <a class="nav-link" href="#">Liên hệ</a>
                    </li>
 
@@ -48,3 +54,4 @@
 
        </div>
    </nav>
+   <div class="mt-25"></div>
