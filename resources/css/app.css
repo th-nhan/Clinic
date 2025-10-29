@@ -141,3 +141,38 @@
         @apply bg-background text-foreground;
     }
 }
+
+
+@import "bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f6f8fa;
+}
+
+/* .card {
+    transition: all 0.2s ease-in-out;
+    border-radius: 14px;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+} */
+
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+/* .table tbody tr:hover {
+    background-color: #eef5ff;
+    cursor: pointer;
+} */
+
+label.form-label {
+    font-weight: 500;
+    color: #555;
+}

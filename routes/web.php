@@ -22,5 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/lich-lam-viec', [ScheduleController::class, 'index'])->name('QuanLyLichLamViec.index');
-
-require __DIR__.'/settings.php';
+Route::get('/lichsu', function () {
+    return view('QuanLyLichSu.index');
+})->name('QuanLyLichSu.index');
+require __DIR__ . '/settings.php';

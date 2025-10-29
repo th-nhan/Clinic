@@ -7,7 +7,7 @@
 
        .mt-25 {
            margin-top: 100px;
-        }
+       }
    </style>
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
@@ -44,7 +44,7 @@
                    <a href="{{ route('QuanLyLichLamViec.index') }}" class="btn btn-info">Quản lý lịch làm việc</a>
                </div>
                <div class="pb-2  pe-2">
-                   <a href="{{ route('QuanLyLichLamViec.index') }}" class="btn btn-info">Quản lý lịch sử khám</a>
+                   <a href="{{ route('QuanLyLichSu.index') }}" class="btn btn-info">Quản lý lịch sử khám</a>
                </div>
                <div class="pb-2  pe-2">
                    <button class="btn btn-primary">Đăng nhập</button>
