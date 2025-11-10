@@ -47,7 +47,10 @@
                    <a href="{{ route('QuanLyLichSu.index') }}" class="btn btn-info">Quản lý lịch sử khám</a>
                </div>
                <div class="pb-2  pe-2">
-                   <button class="btn btn-primary">Đăng nhập</button>
+                   <div class="border  border-primary rounded-circle w-30 h-30 d-flex justify-content-center align-items-center">
+                        <img src="pic/bs1.jpg" alt="avatar" class="rounded-circle "
+                           width="30px" height="30px">
+                   </div>
                </div>
 
            </div>
