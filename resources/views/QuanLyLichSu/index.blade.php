@@ -63,96 +63,46 @@
                         <th>Lịch hẹn</th>
                         <th>Thao tác</th>
                     </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>BS. Trần Minh</td>
-                        <td>2025-10-25</td>
-                        <td>
-                            <ul class="text-start mb-0">
-                                <li>Trám răng sâu</li>
-                                <li>Tẩy trắng răng</li>
-                            </ul>
-                        </td>
-                        <td class="text-success fw-bold">650,000đ</td>
-                        <td><span class="bg-success badge">Đã thanh toán</span></td>
-                        <td><span class="badge bg-info">📅 2025-11-05</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
-                                data-bs-target="#viewHistoryModal">Xem</button>
-                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
-                                data-bs-target="#editHistoryModal">
-                                Sửa
-                            </button>
-                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#deleteHistoryModal">
-                                Xóa
-                            </button>
-                        </td>
-                    </tr>
+                    <tbody>
+                        @foreach($histories as $item)
+                        <tr>
+                            <td>{{ $item->history_id }}</td>
+                            <td>{{ $item->customer->fullname ?? 'Không có' }}</td>
+                            <td>{{ $item->user->fullname ?? 'Không có' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
 
-                    <tr>
-                        <td>2</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>BS. Trần Minh</td>
-                        <td>2025-10-25</td>
-                        <td>
-                            <ul class="text-start mb-0">
-                                <li>Trám răng sâu</li>
-                                <li>Tẩy trắng răng</li>
-                            </ul>
-                        </td>
-                        <td class="text-success fw-bold">650,000đ</td>
-                        <td><span class="bg-success badge">Đã thanh toán</span></td>
-                        <td><span class="badge bg-info">📅 2025-11-05</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-info">Xem</button>
-                            <button class="btn btn-sm btn-outline-warning">Sửa</button>
-                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
-                        </td>
-                    </tr>
+                            <td class="text-start">
+                                <ul class="mb-0">
+                                    @foreach($item->historyDetails as $detail)
+                                    <li>{{ $detail->service->name ?? 'Không có tên' }}</li>
+                                    @endforeach
+                                </ul>
+                            </td>
 
-                    <tr>
-                        <td>3</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>BS. Trần Minh</td>
-                        <td>2025-10-25</td>
-                        <td>
-                            <ul class="text-start mb-0">
-                                <li>Trám răng sâu</li>
-                                <li>Tẩy trắng răng</li>
-                            </ul>
-                        </td>
-                        <td class="text-success fw-bold">650,000đ</td>
-                        <td><span class="bg-success badge">Đã thanh toán</span></td>
-                        <td><span class="badge bg-info">📅 2025-11-05</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-info">Xem</button>
-                            <button class="btn btn-sm btn-outline-warning">Sửa</button>
-                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
-                        </td>
-                    </tr>
+                            <td>
+                                {{ number_format($item->invoice->total_price ?? 0, 0, ',', '.') }} đ
+                            </td>
 
-                    <tr>
-                        <td>4</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>BS. Trần Minh</td>
-                        <td>2025-10-25</td>
-                        <td>
-                            <ul class="text-start mb-0">
-                                <li>Trám răng sâu</li>
-                                <li>Tẩy trắng răng</li>
-                            </ul>
-                        </td>
-                        <td class="text-success fw-bold">650,000đ</td>
-                        <td><span class="bg-light text-muted badge">Chưa thanh toán</span></td>
-                        <td><span class="badge bg-light text-muted">Chưa gặp</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-info">Xem</button>
-                            <button class="btn btn-sm btn-outline-warning">Sửa</button>
-                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
-                        </td>
-                    </tr>
+                            <td>
+                                @if(optional($item->invoice)->status == 'paid')
+                                <span class="badge bg-success">Đã thanh toán</span>
+                                @elseif(optional($item->invoice)->status == 'unpaid')
+                                <span class="badge bg-warning text-dark">Chưa thanh toán</span>
+                                @else
+                                <span class="badge bg-secondary">Không rõ</span>
+                                @endif
+                            </td>
+                            <td>
+                                {{ $item->appointment_date ? \Carbon\Carbon::parse($item->appointment_date)->format('d/m/Y') : 'Chưa có' }}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#viewHistoryModal" data-id="{{ $item->id }}">Xem</button>
+                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editHistoryModal" data-id="{{ $item->id }}">Sửa</button> 
+                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteHistoryModal" data-id="{{ $item->id }}">Xóa</button> 
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
         </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HistoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -31,9 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/lichlamviec', function(){
     return view('QuanLyLichLamViec.index');
 })->name('QuanLyLichLamViec.index');
-Route::get('/lichsu', function () {
-    return view('QuanLyLichSu.index');
-})->name('QuanLyLichSu.index');
+Route::get('/lichsu', [HistoryController::class,'index'])->name('lichsu');
 // Route::get('/login', function () {
 //     return view('DangNhap.login');
 // })->name('DangNhap.login');

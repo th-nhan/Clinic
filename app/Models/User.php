@@ -49,4 +49,20 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+    protected $primaryKey = 'user_id';
+    public function history() {
+        return $this->hasMany(History::class);
+    }
+    public function invoice() {
+        return $this->hasMany(Invoice::class);
+    }
+    public function roles() {
+        return $this->hasMany(Role::class);
+    }
+    public function schedule() {
+        return $this->hasMany(Schedule::class);
+    }
+    public function appointment() {
+        return $this->hasMany(Appointment::class);
+    }
 }

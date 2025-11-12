@@ -4,16 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-class Invoice extends Model
+class Appointment extends Model
 {
-    public $timestamps = false;
     use HasFactory;
-    protected $primaryKey = 'invoice_id';
+    public function appointmentdetail() {
+        return $this->hasMany(AppointmentDetail::class);
+    }
     public function user() {
         return $this->belongsTo(User::class);
-    }
-    public function history()
-    {
-        return $this->belongsTo(History::class, 'history_id', 'history_id');
     }
 }
