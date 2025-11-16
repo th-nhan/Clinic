@@ -105,7 +105,7 @@
                                 <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
                                     data-bs-target="#viewHistoryModal-{{ $item->history_id }}" data-id="{{ $item->id }}">Xem</button>
                                 <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
-                                    data-bs-target="#editHistoryModal" data-id="{{ $item->id }}">Sửa</button>
+                                    data-bs-target="#editHistoryModal--{{ $item->history_id }}" data-id="{{ $item->id }}">Sửa</button>
                                 <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
                                     data-bs-target="#deleteHistoryModal" data-id="{{ $item->id }}">Xóa</button>
                             </td>

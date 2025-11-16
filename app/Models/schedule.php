@@ -9,9 +9,9 @@ class Schedule extends Model
     public $timestamps = false;
     use HasFactory;
     public function scheduletime() {
-        return $this->belongsTo(ScheduleTime::class);
+        return $this->belongsTo(ScheduleTime::class,'schedule_time_id', 'schedule_time_id');
     }
     public function user() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id','user_id');
     }
 }

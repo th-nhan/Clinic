@@ -3,14 +3,16 @@
 namespace App\Http\Controllers; 
 
 use App\Http\Controllers\Controller;
+use App\Models\Schedule;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
-    public function index() // <--- Đây là phương thức bị thiếu hoặc sai tên
+    public function index() 
     {
-        // Trả về view index.blade.php của lịch làm việc
-        return view('QuanLyLichLamViec.index'); 
-        // Thay 'working_schedule.index' bằng đường dẫn view chính xác của bạn
+        $schedule =  Schedule::with(['user','scheduletime'])->get();
+        // $user = User::all();
+        return view('QuanLyLichLamViec.index',compact('schedule'));
     }
 }

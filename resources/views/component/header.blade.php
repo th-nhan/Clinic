@@ -41,7 +41,7 @@
 
             </ul>
             <div class="pb-2 pe-2">
-                <a href="{{ route('QuanLyLichLamViec.index') }}" class="btn btn-info">Quản lý lịch làm việc</a>
+                <a href="{{ route('lichlamviec') }}" class="btn btn-info">Quản lý lịch làm việc</a>
             </div>
             <div class="pb-2  pe-2">
                 <a href="{{ route('lichsu') }}" class="btn btn-info">Quản lý lịch sử khám</a>

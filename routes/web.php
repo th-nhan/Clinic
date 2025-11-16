@@ -29,10 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
+Route::get('/lichlamviec', [ScheduleController::class,'index'])->name('lichlamviec');
 
-Route::get('/lichlamviec', function(){
-    return view('QuanLyLichLamViec.index');
-})->name('QuanLyLichLamViec.index');
 Route::get('/lichsu', [HistoryController::class,'index'])->name('lichsu');
 // Route::get('/login', function () {
 //     return view('DangNhap.login');
