@@ -299,3 +299,31 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Xóa Nhiều --}}
+<div class="modal fade" id="modalXoaNhieu" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa <b id="countDisplay">0</b> lịch làm việc đã chọn không?</p>
+                <p class="text-danger small">Hành động này không thể hoàn tác!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                
+                
+                <form id="formXoaNhieu" action="{{ route('lich.deleteMany') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    
+                    <input type="hidden" name="ids" id="idsToDelete">
+                    <button type="submit" class="btn btn-danger">Đồng ý Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

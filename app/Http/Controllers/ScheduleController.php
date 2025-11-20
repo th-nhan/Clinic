@@ -237,4 +237,27 @@ class ScheduleController extends Controller
             return back()->with('error', 'Lỗi hệ thống: ' . $e->getMessage());
         }
     }
+
+    public function deleteMany(Request $request)
+    {
+        try {
+            
+            $idsString = $request->input('ids');
+            
+            if (empty($idsString)) {
+                return back()->with('error', 'Chưa chọn lịch nào để xóa.');
+            }
+
+            
+            $idsArray = explode(',', $idsString);
+
+            
+            Schedule::whereIn('schedule_id', $idsArray)->delete();
+
+            return back()->with('success', 'Đã xóa ' . count($idsArray) . ' lịch thành công!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Lỗi xóa nhiều: ' . $e->getMessage());
+        }
+    }
 }

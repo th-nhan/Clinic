@@ -87,7 +87,7 @@
                         <div class="card-body p-4 p-md-5">
                             <h3 class="card-title mb-4 border-bottom pb-2">
                                 <i class="bi bi-search text-primary p-2"></i>
-                                Tìm Kiếm Lịch Làm Việc
+                                Tìm kiếm lịch làm việc
                             </h3>
 
                             <form action="{{ route('lich.index') }}" method="GET">
@@ -215,6 +215,12 @@
                                     </a>
                                 </div>
                             </form>
+                            
+                            <h3 class="card-title mt-5 border-bottom pb-2">
+                                
+                                <i class="bi bi-list-columns-reverse text-primary p-2"></i>
+                                Danh sách lịch làm việc
+                            </h3>
 
                             <div class="table-responsive mt-5">
                                 <table class="table table-striped table-hover text-center align-middle">
@@ -289,7 +295,7 @@
                         <div class="card-body p-4 p-md-5">
                             <h3 class="card-title mb-4 border-bottom pb-2">
                                 <i class="bi bi-trash3-fill text-primary p-2"></i>
-                                Xóa Lịch Làm Việc
+                                Xóa lịch làm việc
                             </h3>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover text-center align-middle">
@@ -316,7 +322,7 @@
                                             <td>
                                                 <div class="form-check d-flex justify-content-center">
                                                     <input class="form-check-input row-checkbox" type="checkbox"
-                                                        value="1" onchange="updateDeleteButton()">
+                                                        value="{{ $item->schedule_id }}" onchange="updateDeleteButton()">
                                                 </div>
                                             </td>
                                             <td>{{ $item->schedule_id }}</td>
@@ -344,7 +350,7 @@
                                             </td>
                                             <td>
                                                 <button class="btn btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteLichLamViecModal">Xóa</button>
+                                                    data-bs-target="#deleteLichLamViecModal-{{ $item->schedule_id }}">Xóa</button>
                                             </td>
 
                                         </tr>
@@ -357,7 +363,7 @@
 
                             <div class="batch-delete-area d-flex justify-content-end mt-3" id="batchDeleteArea">
                                 <button type="button" class="btn btn-danger btn-lg shadow-sm" data-bs-toggle="modal"
-                                    data-bs-target="#deleteLichLamViecModal">
+                                    data-bs-target="#modalXoaNhieu">
                                     <i class="bi bi-trash-fill"></i> Xóa tất cả đã chọn (<span
                                         id="selectedCount">0</span>)
                                 </button>
