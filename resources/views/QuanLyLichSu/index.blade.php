@@ -12,6 +12,35 @@
 <body class="bg-light">
     @include('component.header')
     <div class="container mt-5">
+        @if (session('success') || session('add_success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>Thành công!</strong> {{ session('success') ?? session('add_success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Rất tiếc!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if ($errors->any())
+        <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Vui lòng kiểm tra lại dữ liệu:</strong>
+            <ul class="mb-0 mt-1">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
         <div class="d-flex align-items-center mb-3 justify-content-between">
             <h2 class="m-0" style="font-family:'Times New Roman', Times, serif;">
                 🦷 QUẢN LÝ LỊCH SỬ KHÁM
@@ -21,20 +50,21 @@
         <div class="card shadow-sm mb-4 mt-4">
             <div class="card-body">
                 <div class="fw-bold mb-2 ml-2 text-primary">Tìm kiếm</div>
-                <form class="row g-2 ">
+                <form class="row g-2" method="GET" action="{{ route('lichsu.index') }}">
                     <div class="col-md-4">
-                        <input class="form-control" type="text" placeholder="Nhập tên khách hàng..">
+                        <div class="position-relative">
+                            <input type="text" id="searchName" class="form-control" name="search_name"
+                                placeholder="Tìm theo tên...">
+                        </div>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="date">
+                        <input class="form-control" type="date" name="search_date">
                     </div>
                     <div class="col-md-3">
-                        <select name="" id="" class="form-select">
+                        <select name="search_service" class="form-select">
                             <option value="">Tất cả dịch vụ</option>
-                                @foreach($services as $item)
-                                    <option value="">
-                                        {{ $item->name ?? 'Không có tên' }}
-                                    </option>
+                            @foreach($services as $item)
+                            <option value="{{ $item->service_id }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -45,7 +75,7 @@
             </div>
         </div>
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm mb-5">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="text-primary mb-0 fw-bold">Danh sách lịch sử khám</h5>
                 <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addHistoryModal">
@@ -54,7 +84,7 @@
             </div>
 
             <div class="table-responsive ">
-                <table class="table table-striped table-hover align-middle text-center mb-0">
+                <table id="historyTable" class="table table-striped table-hover align-middle mb-0 text-center">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -72,11 +102,11 @@
                         @foreach($histories as $item)
                         <tr>
                             <td>{{ $item->history_id }}</td>
-                            <td>{{ $item->customer->fullname ?? 'Không có' }}</td>
+                            <td class="customer-name">{{ $item->customer->fullname }}</td>
                             <td>{{ $item->user->fullname ?? 'Không có' }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
 
-                            <td class="text-start">
+                            <td class="text-center">
                                 <ul class="mb-0">
                                     @foreach($item->historyDetails as $detail)
                                     <li>{{ $detail->service->name ?? 'Không có tên' }}</li>
@@ -103,11 +133,11 @@
                             </td>
                             <td>
                                 <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
-                                    data-bs-target="#viewHistoryModal-{{ $item->history_id }}" data-id="{{ $item->id }}">Xem</button>
+                                    data-bs-target="#viewHistoryModal-{{ $item->history_id }}">Xem</button>
                                 <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
-                                    data-bs-target="#editHistoryModal" data-id="{{ $item->id }}">Sửa</button>
+                                    data-bs-target="#editHistoryModal-{{ $item->history_id }}">Sửa</button>
                                 <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteHistoryModal" data-id="{{ $item->id }}">Xóa</button>
+                                    data-bs-target="#deleteHistoryModal-{{ $item->history_id }}">Xóa</button>
                             </td>
                         </tr>
                         @endforeach
@@ -120,7 +150,7 @@
 
 </html>
 
-<!-- Time  -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function updateTime() {
         const timenow = new Date();
@@ -136,4 +166,24 @@
     }
     updateTime();
     setInterval(updateTime, 1000);
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchName");
+        const tableRows = document.querySelectorAll("#historyTable tbody tr");
+
+        searchInput.addEventListener("keyup", function () {
+            let keyword = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                let name = row.querySelector(".customer-name").textContent.toLowerCase();
+
+                if (name.includes(keyword)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    });
 </script>

@@ -19,7 +19,7 @@ return new class extends Migration
                   ->onDelete('cascade');
 
             $table->integer('quantity')->default(1);
-            $table->decimal('price', 10, 2)->nullable();
+            $table->decimal('price', 10, 3)->nullable();
             $table->timestamps();
         });
     }

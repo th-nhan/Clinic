@@ -30,10 +30,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-Route::get('/lichlamviec', function(){
-    return view('QuanLyLichLamViec.index');
-})->name('QuanLyLichLamViec.index');
-Route::get('/lichsu', [HistoryController::class,'index'])->name('lichsu');
+// Route::get('/lichlamviec', function(){
+//     return view('QuanLyLichLamViec.index');
+// })->name('QuanLyLichLamViec.index');
+Route::get('/lichlamviec', [ScheduleController::class,'index'])->name('lichlamviec');
+Route::apiResource('lichsu', HistoryController::class);
+// Route::get('/service/{id}', function($id) {
+//     return App\Models\Service::find($id);
+// });
 // Route::get('/login', function () {
 //     return view('DangNhap.login');
 // })->name('DangNhap.login');

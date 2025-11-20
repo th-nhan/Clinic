@@ -157,88 +157,12 @@
 
 
                                 </tr>
-                                <tr class="clickable-row">
-                                    <td>1</td>
-                                    <td>Đỗ Thành Nhân</td>
-                                    <td>31/10/2025</td>
-                                    <td>Sáng</td>
-                                    <td>drdtn@dtn.com.vn</td>
-                                    <td>0123456789</td>
-                                    <td><span class="badge bg-danger">Đã hủy</span></td>
-                                    <td></td>
-                                    <td>
-                                        <button class="btn btn-warning" data-bs-toggle="modal"
-                                            data-bs-target="#doctorDetailModal" data-id="1"
-                                            data-ten="Đỗ Thành Nhân" data-ngay="31/10/2025" data-ca="Sáng"
-                                            data-email="drdtn@dtn.com.vn" data-sdt="0123456789"
-                                            data-trangthai="Đã hủy" data-ghichu="">
-                                            Xem
-                                        </button>
-                                        <button class="btn btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#capNhatLichLamViec" data-id="1"
-                                            data-ten="Đỗ Thành Nhân" data-ngay="31/10/2025" data-ca="Sáng"
-                                            data-email="drdtn@dtn.com.vn" data-sdt="0123456789"
-                                            data-trangthai="Đã hủy" data-ghichu="">Sửa</button>
-                                        <button class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#deleteLichLamViecModal">Xóa</button>
-
-                                    </td>
+                                @foreach ($schedule as $item)
+                                <tr>
+                                    <td>{{ $item->user_id }}</td>
+                                    <td>{{ $item->user->fullname ?? 'Không có dữ liệu' }}</td>
                                 </tr>
-                                <tr class="clickable-row">
-                                    <td>2</td>
-                                    <td>La Chí Thành</td>
-                                    <td>31/10/2025</td>
-                                    <td>Sáng</td>
-                                    <td>drlct@dtn.com.vn</td>
-                                    <td>0123412345</td>
-
-                                    <td><span class="badge bg-success">Đã duyệt</span></td>
-                                    <td></td>
-                                    <td>
-                                        <button class="btn btn-warning" data-bs-toggle="modal"
-                                            data-bs-target="#doctorDetailModal" data-id="2"
-                                            data-ten="La Chí Thành" data-ngay="31/10/2025" data-ca="Sáng"
-                                            data-trangthai="Đã duyệt" data-ghichu="">
-                                            Xem
-                                        </button>
-                                        <button class="btn btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#capNhatLichLamViec" data-id="2"
-                                            data-ten="La Chí Thành" data-ngay="31/10/2025" data-ca="Sáng"
-                                            data-trangthai="Đã duyệt" data-ghichu="">Sửa</button>
-                                        <button class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#deleteLichLamViecModal">Xóa</button>
-
-                                    </td>
-
-
-                                </tr>
-                                <tr class="clickable-row">
-                                    <td>3</td>
-                                    <td>Nguyễn Cường Đại</td>
-                                    <td>31/10/2025</td>
-                                    <td>Chiều</td>
-                                    <td>drncd@dtn.com.vn</td>
-                                    <td>0987654321</td>
-
-                                    <td><span class="badge bg-success">Đã duyệt</span></td>
-                                    <td></td>
-                                    <td>
-                                        <button class="btn btn-warning" data-bs-toggle="modal"
-                                            data-bs-target="#doctorDetailModal" data-id="3"
-                                            data-ten="Nguyễn Cường Đại" data-ngay="31/10/2025" data-ca="Chiều"
-                                            data-trangthai="Đã duyệt" data-ghichu="">
-                                            Xem
-                                        </button>
-                                        <button class="btn btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#capNhatLichLamViec" data-id="3"
-                                            data-ten="Nguyễn Cường Đại" data-ngay="31/10/2025" data-ca="Chiều"
-                                            data-trangthai="Đã duyệt" data-ghichu="">Sửa</button>
-                                        <button class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#deleteLichLamViecModal">Xóa</button>
-
-                                    </td>
-
-                                </tr>
+                                @endforeach
 
 
                             </table>

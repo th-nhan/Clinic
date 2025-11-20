@@ -1,143 +1,230 @@
-<!-- modal add -->
-
-<div class="modal fade" id="addHistoryModal" tabindex="-1" aria-labelledby="addHistoryLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content shadow-lg border-0">
-            <div class=" modal-header bg-primary text-white">
-                <h5 class="modal-title" id="addHistoryLabel">Thêm lịch sử khám </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="#" method="post">
+<title>History</title>
+<!-- modal add history -->
+<form action="{{ route('lichsu.store') }}" method="POST">
+    @csrf
+    <div class="modal fade" id="addHistoryModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="fw-bold">Thêm lịch sử khám</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="row g-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Khách hàng</label>
+                            <label>Khách hàng</label>
                             <input type="text" name="khachhang" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Bác sĩ</label>
-                            <select name="bacsi" id="" class="form-select">
+                            <label>Số điện thoại khách hàng</label>
+                            <input type="text" name="sodienthoai" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label>Bác sĩ</label>
+                            <select name="bacsi" class="form-select" required>
                                 <option value="">Tất cả bác sĩ</option>
-                                @foreach ($users as $item )  
-                                <option value="">
-                                    {{ $item->fullname ?? 'Không có tên' }}
-                                </option>
+                                @foreach($users as $u)
+                                <option value="{{ $u->user_id }}">{{ $u->fullname }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ngày khám</label>
+                        <div class="col-md-3">
+                            <label>Ngày khám</label>
                             <input type="date" name="ngaykham" class="form-control" required>
                         </div>
+                        <div class="col-md-3">
+                            <label>Giờ hẹn</label>
+                            <input type="time" name="giohen" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3 align-items-center">
                         <div class="col-md-6">
-                            <label class="form-label">Dịch vụ</label>
-                            <select name="dichvu" class="form-select">
-                                <option value="">Tất cả dịch vụ</option>
-                                @foreach ($services as $item )
-                                <option value="">
-                                    {{ $item->name ?? 'Không có tên' }}
+                            <label>Trạng thái</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioStatus" id="radioUnpaid"
+                                    value="unpaid">
+                                <label class="form-check-label" for="radioUnpaid">Chưa thanh toán</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioStatus" id="radioPaid"
+                                    value="paid" checked>
+                                <label class="form-check-label" for="radioPaid">Đã thanh toán</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tổng tiền</label>
+                            <input type="number" name="tien" class="form-control" placeholder="Nhập tổng tiền">
+                        </div>
+                        <div class="row g-1">
+                            <label>Dịch vụ</label>
+                            @foreach($services as $s)
+                            <div class="col-6">
+                                <div class="form-check">
+                                    <input class="form-check-input service-checkbox" type="checkbox" name="dichvu[]"
+                                        value="{{ $s->service_id }}" data-min="{{ $s->min_price }}"
+                                        data-max="{{ $s->max_price }}">
+                                    <label class="form-check-label">{{ $s->name }}</label>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn btn-primary" type="submit">Lưu</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!-- modal update history  -->
+@foreach($histories as $item)
+<form action="{{ route('lichsu.update', $item->history_id) }}" method="POST">
+    @csrf
+    @method('PUT')
+    <div class="modal fade" id="editHistoryModal-{{ $item->history_id }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5>Sửa lịch sử khám</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label>Khách hàng</label>
+                            <input type="text" name="khachhang" class="form-control"
+                                value="{{ $item->customer->fullname}}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Số điện thoại khách hàng</label>
+                            <input type="text" name="sodienthoai" class="form-control" required
+                                value="{{ $item->customer->contact_number }}">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label>Bác sĩ</label>
+                            <select name="bacsi" class="form-select" required>
+                                <option value="">Tất cả bác sĩ</option>
+                                @foreach($users as $u)
+                                <option value="{{ $u->user_id }}" {{ $item->user_id == $u->user_id ? 'selected' : '' }}>
+                                    {{ $u->fullname }}
                                 </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Tổng tiền</label>
-                            <input type="number" name="tongtien" class="form-control" placeholder="VD: 650000" required>
+                        <div class="col-md-3">
+                            <label>Ngày khám</label>
+                            <input type="date" name="ngaykham" class="form-control" value="{{ $item->date }}" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Giờ hẹn</label>
-                            <input type="date" name="lichhen" class="form-control">
+                        <div class="col-md-3">
+                            <label>Giờ hẹn</label>
+                            <input type="time" name="giohen" class="form-control" value="{{ $item->time ?? '' }}">
                         </div>
                     </div>
+
+                    <div class="row g-3 mb-3 align-items-center">
+                        <div class="col-md-6">
+                            <label>Trạng thái</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioStatus"
+                                    id="radioUnpaid-{{ $item->history_id }}" value="unpaid" {{
+                                    optional($item->invoice)->status == 'unpaid' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="radioUnpaid-{{ $item->history_id }}">Chưa thanh
+                                    toán</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="radioStatus"
+                                    id="radioPaid-{{ $item->history_id }}" value="paid" {{
+                                    optional($item->invoice)->status == 'paid' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="radioPaid-{{ $item->history_id }}">Đã thanh
+                                    toán</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tổng tiền</label>
+                            @php
+                            $totalPrice = $item->historyDetails->sum('price');
+                            @endphp
+                            <input type="number" name="tien" class="form-control" value="{{ $totalPrice }}">
+
+                        </div>
+                        <div class="row g-1">
+                            <label>Dịch vụ</label>
+                            @foreach($services as $s)
+                            <div class="col-6">
+                                <div class="form-check">
+                                    <input class="form-check-input service-checkbox" type="checkbox" name="dichvu[]"
+                                        value="{{ $s->service_id }}" data-min="{{ $s->min_price }}"
+                                        data-max="{{ $s->max_price }}" {{ $item->historyDetails->contains('service_id',
+                                    $s->service_id) ? 'checked' : '' }}>
+                                    <label class="form-check-label">{{ $s->name }}</label>
+                                </div>
+                            </div>
+                            @endforeach
+
+                        </div>
+                    </div>
+
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="submit" class="btn btn-warning">Lưu</button>
                 </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-
-
-
-<!-- modal update -->
-
-<div class="modal fade" id="editHistoryModal" tabindex="-1" aria-labelledby="editHistoryLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="editHistoryLabel">Sửa lịch sử khám</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-            <form id="editForm" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <input type="hidden" name="id" id="edit-id">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Khách hàng</label>
-                            <input type="text" name="khachhang" id="edit-khachhang" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Bác sĩ</label>
-                            <input type="text" name="bacsi" id="edit-bacsi" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ngày khám</label>
-                            <input type="date" name="ngaykham" id="edit-ngaykham" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Dịch vụ</label>
-                            <input type="text" name="dichvu" id="edit-dichvu" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Tổng tiền</label>
-                            <input type="number" name="tongtien" id="edit-tongtien" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ngày hẹn</label>
-                            <input type="date" name="lichhen" id="edit-lichhen" class="form-control">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-warning text-white">Cập nhật</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
+</form>
+@endforeach
+
 
 
 
 <!-- modal delete -->
 
-<div class="modal fade" id="deleteHistoryModal">
-    <div class="modal-dialog">
-        <div class="modal-content border-0 shadow-sm">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteHistoryLabel"> Xác nhận xóa</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="deleteForm" method="POST">
-                <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn xóa <strong class="text-danger" id="delete-name">lịch sử</strong>
-                        này không?</p>
+@foreach ($histories as $item)
+<form id="deleteForm" method="POST" action="{{ route('lichsu.destroy', $item->history_id) }}">
+    @csrf
+    @method('DELETE')
+
+    <div class="modal fade" id="deleteHistoryModal-{{ $item->history_id }}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header bg-danger text-white">
+                    <h5>Xóa lịch sử khám</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
+                <div class="modal-body">
+                    Bạn có chắc muốn xóa lịch sử này không?
+                </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" class="btn btn-danger">Xóa</button>
                 </div>
-            </form>
+
+            </div>
         </div>
     </div>
-</div>
+
+</form>
+@endforeach
 
 
 
@@ -194,7 +281,9 @@
                         <h6 class="fw-bold ">Bác sĩ phụ trách</h6>
                         <div class=" d-flex flex-column align-items-center justify-content-center">
                             <img src="{{ $item->user->avatar }}" alt="{{ $item->user->fullname ?? 'Bác sĩ' }}"
-                                class="rounded-circle border-3 border-secondary" style="max-width: 170px; max-height: 170px; object-fit: cover;" width="150" height="150">
+                                class="rounded-circle border-3 border-secondary"
+                                style="max-width: 160px; max-height: 160px; object-fit: cover;" width="150"
+                                height="150">
                             <p class="mb-0 fw-semibold mt-2">{{ $item->user->fullname ?? 'Bác sĩ' }}</p>
                             <p class="text-muted small mt-2">Chuyên khoa: {{ $item->user->description }}</p>
                         </div>
@@ -215,3 +304,26 @@
     </div>
 </div>
 @endforeach
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(".service-checkbox");
+        const totalInput = document.querySelector("input[name='tien']");
+
+        function updateTotal() {
+            let total = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    let min = parseInt(cb.dataset.min);
+                    total += min;
+                }
+            });
+            totalInput.value = total.toLocaleString("vi-VN");
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener("change", updateTotal);
+        });
+    });
+</script>
