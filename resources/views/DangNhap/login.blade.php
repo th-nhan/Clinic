@@ -7,13 +7,46 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Đăng Nhập</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <style>
+        .card {
+            background: #fdfdfd;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        /* CSS chỉnh ảnh logo đẹp hơn */
+        .logo-img {
+            width: 100px;
+            height: auto;
+            border-radius: 50px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            transition: transform 0.3s ease;
+        }
+
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+    </style>
 
 </head>
 
 <body>
     <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4 shadow" style="width: 400px;">
-            <h3 class="card-title text-center mb-4">Đăng Nhập</h3>
+            <div class="card-header-custom">
+                <div class="logo-container">
+                    <img src="pic/logo1.jpg" alt="logo" class="logo-img">
+                </div>
+
+                <h2 class="card-title text-center">Đăng Nhập</h2>
+                <p class="text-muted small text-center">Vui lòng đăng nhập để tiếp tục</p>
+            </div>
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="mb-3">
@@ -34,6 +67,7 @@
             </form>
 
         </div>
+    </div>
 </body>
 
 </html>

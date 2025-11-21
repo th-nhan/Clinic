@@ -136,6 +136,7 @@
                                     data-bs-target="#viewHistoryModal-{{ $item->history_id }}">Xem</button>
                                 <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
                                     data-bs-target="#editHistoryModal-{{ $item->history_id }}">Sửa</button>
+
                                 <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
                                     data-bs-target="#deleteHistoryModal-{{ $item->history_id }}">Xóa</button>
                             </td>

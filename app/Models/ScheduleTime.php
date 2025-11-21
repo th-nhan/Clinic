@@ -10,4 +10,9 @@ class ScheduleTime extends Model
     public function schedule() {
         return $this->hasMany(Schedule::class);
     }
+
+    protected $casts = [
+        'start_time' => 'datetime', // Sẽ tự động chuyển '08:00:00' thành đối tượng Carbon
+        'end_time' => 'datetime',
+    ];
 }
