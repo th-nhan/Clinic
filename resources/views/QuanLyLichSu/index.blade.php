@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    <title>Document</title>
+    <title>Lịch Sử</title>
 </head>
 @include('QuanLyLichSu.modal')
 
@@ -166,8 +166,6 @@
     }
     updateTime();
     setInterval(updateTime, 1000);
-</script>
-<script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("searchName");
         const tableRows = document.querySelectorAll("#historyTable tbody tr");

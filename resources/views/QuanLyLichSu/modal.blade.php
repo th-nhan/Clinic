@@ -156,11 +156,8 @@
                         </div>
                         <div class="col-md-6">
                             <label>Tổng tiền</label>
-                            @php
-                            $totalPrice = $item->historyDetails->sum('price');
-                            @endphp
-                            <input type="number" name="tien" class="form-control" value="{{ $totalPrice }}">
-
+                            <input type="number" name="tien" class="form-control"
+                                value="{{ $item->invoice->total_price }}">
                         </div>
                         <div class="row g-1">
                             <label>Dịch vụ</label>

@@ -40,12 +40,16 @@ class HistoryController extends Controller
         $existingCustomer = Customer::where('contact_number', $request->sodienthoai)->first();
 
         if ($existingCustomer) {
-            return back()->with('error', 'Số điện thoại này đã tồn tại!');
+              if ($existingCustomer->fullname !== $request->khachhang) {
+                return back()->with('error', 'Số điện thoại này đã tồn tại với khách hàng khác!');
+            }
+            $customer = $existingCustomer;
+        } else {
+            $customer = Customer::create([
+                'fullname' => $request->khachhang,
+                'contact_number' => $request->sodienthoai
+            ]);
         }
-        $customer = Customer::create([
-            'fullname' => $request->khachhang,
-            'contact_number' => $request->sodienthoai
-        ]);
         $history = history::create([
             'customer_id' => $customer->customer_id,
             'user_id' => $request->bacsi,
