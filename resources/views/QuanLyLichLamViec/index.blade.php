@@ -85,7 +85,7 @@
 
             {{-- Form Xem lịch làm việc theo tuần --}}
             <div class="px-3 px-md-5">
-                <div class="collapse " id="xemLichLamViec" data-bs-parent="#collapseContainer">
+                <div class="collapse {{ request()->has('week') || !request()->hasAny(['ten_bac_si', 'search_date', 'status']) ? 'show' : '' }}" id="xemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4">
 
@@ -214,7 +214,7 @@
 
             {{-- Form Tìm kiếm lịch làm việc  --}}
             <div class="px-3 px-md-5">
-                <div class="collapse show" id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
+                <div class="collapse {{ request()->hasAny(['ten_bac_si', 'search_date', 'caLamViec', 'status']) ? 'show' : '' }}" id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4 p-md-5">
                             <h3 class="card-title mb-4 border-bottom pb-2">
@@ -414,11 +414,12 @@
 
                             </div>
 
-                        </div>
+
+                        </form>
                     </div>
                 </div>
             </div>
-
+        </div>
 
             {{-- Form Xoa lịch làm việc  --}}
             <div class="px-3 px-md-5">

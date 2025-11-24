@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 class History extends Model
 {
-    public $timestamps = false;
-
     use HasFactory;
+    public $timestamps = false;
     protected $primaryKey = 'history_id';
     protected $table = 'histories';
+
+    protected $fillable = ['customer_id', 'user_id', 'date', 'time'];
+
     public function invoice()
     {
         return $this->hasOne(Invoice::class, 'history_id', 'history_id');

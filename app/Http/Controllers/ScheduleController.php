@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
@@ -33,12 +34,19 @@ class ScheduleController extends Controller
             $endOfWeek   = $startOfWeek->copy()->endOfWeek();
         }
 
+
         $weekDates = [];
         $currentDate = $startOfWeek->copy();
         while ($currentDate <= $endOfWeek) {
             $weekDates[] = $currentDate->copy();
             $currentDate->addDay();
         }
+
+        $schedule = Schedule::with(['user','scheduletime'])->get();
+      
+        $query = Schedule::with(['user', 'scheduletime'])
+            ->orderBy('schedule_id', 'desc');
+
 
         // 2. KHỞI TẠO QUERY CƠ BẢN (Dùng chung cho cả 2 bảng)
         $baseQuery = Schedule::with(['user', 'scheduletime']);

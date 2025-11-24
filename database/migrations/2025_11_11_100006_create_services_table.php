@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('image')->nullable();
             $table->text('description')->nullable();
-            $table->decimal('min_price', 10, 2)->nullable();
-            $table->decimal('max_price', 10, 2)->nullable();
+            $table->decimal('min_price', 10, 3)->nullable();
+            $table->decimal('max_price', 10, 3)->nullable();
             $table->string('unit')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();

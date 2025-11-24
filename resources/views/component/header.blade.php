@@ -10,11 +10,12 @@
     }
 
     @media (min-width: 992px) {
-    .dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0; /* Chỉnh lại khoảng cách nếu cần */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+            /* Chỉnh lại khoảng cách nếu cần */
+        }
     }
-}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -66,7 +67,7 @@
                 <a href="{{ route('lichlamviec') }}" class="btn btn-info">Quản lý lịch làm việc</a>
             </div>
             <div class="pb-2  pe-2">
-                <a href="{{ route('lichsu') }}" class="btn btn-info">Quản lý lịch sử khám</a>
+                <a href="{{ route('lichsu.index') }}" class="btn btn-info">Quản lý lịch sử khám</a>
             </div>
             <div class="d-flex align-items-center gap-3">
 
@@ -97,7 +98,7 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item py-2 d-flex align-items-center" href="{{ route('lichsu') }}">
+                            <a class="dropdown-item py-2 d-flex align-items-center" href="{{ route('lichsu.index') }}">
                                 <i class="bi bi-clock-history me-2 text-info"></i>
                                 Quản lý lịch sử khám
                             </a>
