@@ -38,4 +38,5 @@ Route::get('/lichsu', [HistoryController::class,'index'])->name('lichsu');
 Route::delete('/lich/delete-many', [ScheduleController::class, 'deleteMany'])->name('lich.deleteMany');
 Route::apiResource('lich',ScheduleController::class);
 
+
 require __DIR__ . '/settings.php';

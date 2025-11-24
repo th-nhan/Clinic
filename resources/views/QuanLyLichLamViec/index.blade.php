@@ -69,6 +69,9 @@
                     data-bs-toggle="modal" aria-expanded="false" aria-controls="themLichLamViecModal">
                     <i class="bi bi-plus-circle"></i> Thêm lịch làm việc
                 </button>
+                <button type="button" class="btn btn-outline-warning" data-bs-target="#xemLichLamViec"
+                    data-bs-toggle="collapse" aria-expanded="false" aria-controls="xemLichLamViec">
+                    Xem lịch làm việc</button>
                 <button type="button" class="btn btn-outline-secondary" data-bs-target="#timKiemLichLamViec"
                     data-bs-toggle="collapse" aria-expanded="false" aria-controls="timKiemLichLamViec">
                     Tìm kiếm</button>
@@ -80,9 +83,138 @@
 
         <div id="collapseContainer">
 
+            {{-- Form Xem lịch làm việc theo tuần --}}
+            <div class="px-3 px-md-5">
+                <div class="collapse " id="xemLichLamViec" data-bs-parent="#collapseContainer">
+                    <div class="card shadow-lg mb-4">
+                        <div class="card-body p-4">
+
+                            {{-- 1. HEADER & ĐIỀU HƯỚNG --}}
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 border-bottom pb-3">
+                                <h3 class="card-title m-0 text-primary">
+                                    <i class="bi bi-calendar-week me-2"></i> Lịch Theo Tuần
+                                </h3>
+
+                                <div class="d-flex align-items-center gap-2 mt-3 mt-md-0 bg-light p-2 rounded">
+                                    {{-- Nút Lùi --}}
+                                    <a href="{{ route('lich.index', array_merge(request()->all(), ['week' => $weekOffset - 1])) }}"
+                                        class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+
+                                    {{-- Hiển thị ngày --}}
+                                    <span class="fw-bold mx-3 text-dark">
+                                        {{ $startOfWeek->format('d/m') }} - {{ $endOfWeek->format('d/m/Y') }}
+                                    </span>
+
+                                    {{-- Nút Tiến --}}
+                                    <a href="{{ route('lich.index', array_merge(request()->all(), ['week' => $weekOffset + 1])) }}"
+                                        class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+
+                                    {{-- Nút Hôm nay --}}
+                                    @if ($weekOffset != 0)
+                                        <a href="{{ route('lich.index', request()->except('week')) }}"
+                                            class="btn btn-sm btn-secondary ms-2">
+                                            Về hôm nay
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered text-center m-0 align-middle"
+                                    style="min-width: 800px;">
+
+                                    <thead class="bg-primary text-white">
+                                        <tr>
+                                            <th class="py-3" style="width: 100px; background-color: #0d6efd;">CA</th>
+                                            @foreach ($weekDates as $date)
+                                                <th class="{{ $date->isToday() ? 'bg-warning text-dark' : '' }}">
+                                                    <div class="text-uppercase small fw-bold">
+                                                        {{ $date->locale('vi')->dayName }}</div>
+                                                    <div class="fs-5 fw-bold">{{ $date->format('d/m') }}</div>
+                                                </th>
+                                            @endforeach
+                                        </tr>
+                                    </thead>
+
+
+                                    <tbody>
+                                        @php
+                                            $shifts = [
+                                                1 => ['name' => 'SÁNG', 'time' => '08:00 - 11:00', 'bg' => 'success'],
+                                                2 => ['name' => 'CHIỀU', 'time' => '13:00 - 17:00', 'bg' => 'warning'],
+                                                3 => [ 'name' => 'CẢ NGÀY','time' => '08:00 - 17:00', 'bg' => 'primary']
+                                            ];
+                                        @endphp
+
+                                        @foreach ($shifts as $shiftId => $info)
+                                            <tr>
+                                               
+                                                <td class="fw-bold bg-light">
+                                                    <div class="text-{{ $info['bg'] }}">{{ $info['name'] }}</div>
+                                                    <small class="text-muted"
+                                                        style="font-size: 11px">{{ $info['time'] }}</small>
+                                                </td>
+
+                                                {{-- Cột Dữ Liệu Các Ngày --}}
+                                                @foreach ($weekDates as $dateObj)
+                                                    @php
+                                                        $dateKey = $dateObj->format('Y-m-d');
+                                                        $cellData = $calendarData[$dateKey][$shiftId] ?? [];
+                                                    @endphp
+
+                                                    <td class="p-1 align-top"
+                                                        style="height: 100px; background-color: #fff;">
+                                                        @if (count($cellData) > 0)
+                                                            <div class="d-flex flex-column gap-1">
+                                                                @foreach ($cellData as $item)
+                                                                    {{-- Thẻ Bác sĩ --}}
+                                                                    <div class="badge bg-{{ $info['bg'] }} bg-opacity-10 text-dark border border-{{ $info['bg'] }} w-100 text-start p-2 shadow-sm"
+                                                                        style="cursor: pointer;"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#capNhatLichLamViec--{{ $item->schedule_id }}">
+
+                                                                        <div class="d-flex align-items-center">
+                                                                            
+                                                                            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-2"
+                                                                                style="width: 20px; height: 20px; font-size: 10px;">
+                                                                                <i class="bi bi-person-fill"></i>
+                                                                            </div>
+                                                                            <div class="text-truncate"
+                                                                                style="max-width: 80px;">
+                                                                                {{ $item->user->fullname ?? '...' }}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        
+                                                           
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                          
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             {{-- Form Tìm kiếm lịch làm việc  --}}
             <div class="px-3 px-md-5">
-                <div class="collapse show " id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
+                <div class="collapse show" id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4 p-md-5">
                             <h3 class="card-title mb-4 border-bottom pb-2">
@@ -109,8 +241,8 @@
                                     <div class="col-md-6 col-lg-4">
                                         <label class="form-label fw-bold">Thời gian làm việc</label>
 
-                                       
-                                        
+
+
                                         @php $type = request('filter_type', 'date'); @endphp
 
                                         <div class="btn-group w-100 mb-2" role="group">
@@ -133,10 +265,10 @@
                                             </a>
                                         </div>
 
-                                        
+
                                         <input type="hidden" name="filter_type" value="{{ $type }}">
 
-                                       
+
 
                                         {{-- Trường hợp 1: Ngày --}}
                                         @if ($type == 'date')
@@ -215,9 +347,9 @@
                                     </a>
                                 </div>
                             </form>
-                            
+
                             <h3 class="card-title mt-5 border-bottom pb-2">
-                                
+
                                 <i class="bi bi-list-columns-reverse text-primary p-2"></i>
                                 Danh sách lịch làm việc
                             </h3>
@@ -322,7 +454,8 @@
                                             <td>
                                                 <div class="form-check d-flex justify-content-center">
                                                     <input class="form-check-input row-checkbox" type="checkbox"
-                                                        value="{{ $item->schedule_id }}" onchange="updateDeleteButton()">
+                                                        value="{{ $item->schedule_id }}"
+                                                        onchange="updateDeleteButton()">
                                                 </div>
                                             </td>
                                             <td>{{ $item->schedule_id }}</td>
@@ -372,14 +505,7 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
-
-
-
-
-
     </div>
 
 
