@@ -77,7 +77,7 @@
 
         <div class="modal-dialog modal-l">
             <div class="modal-content">
-                <form method="POST" action="{{ route('lich.update',$item->schedule_id) }}">
+                <form method="POST" action="{{ route('lich.update', $item->schedule_id) }}">
                     @csrf
                     @method('PUT')
                     <div class="modal-header bg-info text-white">
@@ -95,15 +95,15 @@
                                 <label for="doctorDataList-{{ $item->schedule_id }}" class="form-label fw-bold">Chọn
                                     bác sĩ</label>
                                 <input class="form-control" list="datalistOptions"
-                                    id="doctorDataList-{{ $item->schedule_id }}" placeholder="Gõ để tìm kiếm..." name="ten_bac_si"
-                                    value="{{ $item->user->fullname ?? 'Không có tên' }}" readonly>
+                                    id="doctorDataList-{{ $item->schedule_id }}" placeholder="Gõ để tìm kiếm..."
+                                    name="ten_bac_si" value="{{ $item->user->fullname ?? 'Không có tên' }}" readonly>
                             </div>
 
                             <div class="col-12">
                                 <label for="dateTimePicker-{{ $item->schedule_id }}" class="form-label fw-bold">Chọn
                                     ngày</label>
-                                <input type="date" class="form-control" id="dateTimePicker-{{ $item->schedule_id }}" name="date"
-                                    value="{{ $item->date }}" required>
+                                <input type="date" class="form-control" id="dateTimePicker-{{ $item->schedule_id }}"
+                                    name="date" value="{{ $item->date }}" required>
                             </div>
 
                             <div class="col-12">
@@ -242,11 +242,9 @@
                             <input class="form-control" list="datalistOptions" id="doctorDataList"
                                 placeholder="Gõ để tìm kiếm..." name="ten_bac_si" required>
                             <datalist id="datalistOptions">
-                                <option value="Nguyễn Thúy Vy"></option>
-                                <option value="Đỗ Thành Nhân"></option>
-                                <option value="Ngô Minh Quý"></option>
-                                <option value="Nguyễn Cường Đại"></option>
-                                <option value="La Chí Thành"></option>
+                                @foreach ($doctorList as $doc)
+                                    <option value="{{ $doc->fullname }}"></option>
+                                @endforeach
                             </datalist>
                         </div>
 
@@ -314,12 +312,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                
-                
+
+
                 <form id="formXoaNhieu" action="{{ route('lich.deleteMany') }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    
+
                     <input type="hidden" name="ids" id="idsToDelete">
                     <button type="submit" class="btn btn-danger">Đồng ý Xóa</button>
                 </form>

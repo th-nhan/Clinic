@@ -14,7 +14,7 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         // Trả về file: resources/views/login.blade.php (hoặc tên view của bạn)
-        return view('DangNhap.login'); 
+        return view('DangNhap.login');
     }
 
     /**
@@ -23,34 +23,21 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // 1. Validate dữ liệu đầu vào (email, password)
-        // $credentials = $request->validate([
-        //     'email' => ['required', 'email'],
-        //     'password' => ['required'],
-        // ]);
+        $email = $request->input('email');
+        $password = $request->input('password');
+        if (empty($email) || empty($password)) {
+            return back()->with('error', 'Vui lòng nhập đầy đủ Email và Mật khẩu!')->withInput();
+        }
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+            return redirect()->route('home')->with('success', 'Đăng nhập thành công!');
+        }
+        return back()->with('error', 'Email hoặc mật khẩu không chính xác.')->withInput();
+    }
 
-        // // 2. Thử đăng nhập
-        // //    Hàm Auth::attempt() sẽ tự động hash password và so sánh với
-        // //    password đã hash trong database.
-        // if (Auth::attempt($credentials)) {
-            
-        //     // Nếu ĐĂNG NHẬP THÀNH CÔNG:
+    public function logout(Request $request)
+    {
+        Auth::logout();
 
-        //     // Tạo lại session ID để bảo mật (tránh session fixation)
-        //     $request->session()->regenerate();
-
-        //     // Chuyển hướng người dùng về trang họ muốn (hoặc trang /home)
-        //     // 'intended' rất hay, nó sẽ đưa người dùng về trang
-        //     // mà họ bị chặn (ví dụ /admin) trước khi bị bắt login.
-        //     return redirect()->intended('home');
-        // }
-
-        // // 3. Nếu ĐĂNG NHẬP THẤT BẠI:
-        // //    Quay lại form login và gửi kèm một lỗi
-        // return back()->withErrors([
-        //     'email' => 'Thông tin đăng nhập (email hoặc mật khẩu) không chính xác.',
-        // ])->onlyInput('email'); // Giữ lại email đã nhập
-
-        return redirect()->intended('home');
+        return redirect()->route('login');
     }
 }

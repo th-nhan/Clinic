@@ -8,6 +8,7 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <title>Quản lý lịch làm việc</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 </head>
 {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --}}
@@ -85,7 +86,8 @@
 
             {{-- Form Xem lịch làm việc theo tuần --}}
             <div class="px-3 px-md-5">
-                <div class="collapse {{ request()->has('week') || !request()->hasAny(['ten_bac_si', 'search_date', 'status']) ? 'show' : '' }}" id="xemLichLamViec" data-bs-parent="#collapseContainer">
+                <div class="collapse {{ request()->has('week') || !request()->hasAny(['ten_bac_si', 'search_date', 'status']) ? 'show' : '' }}"
+                    id="xemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4">
 
@@ -148,13 +150,17 @@
                                             $shifts = [
                                                 1 => ['name' => 'SÁNG', 'time' => '08:00 - 11:00', 'bg' => 'success'],
                                                 2 => ['name' => 'CHIỀU', 'time' => '13:00 - 17:00', 'bg' => 'warning'],
-                                                3 => [ 'name' => 'CẢ NGÀY','time' => '08:00 - 17:00', 'bg' => 'primary']
+                                                3 => [
+                                                    'name' => 'CẢ NGÀY',
+                                                    'time' => '08:00 - 17:00',
+                                                    'bg' => 'primary',
+                                                ],
                                             ];
                                         @endphp
 
                                         @foreach ($shifts as $shiftId => $info)
                                             <tr>
-                                               
+
                                                 <td class="fw-bold bg-light">
                                                     <div class="text-{{ $info['bg'] }}">{{ $info['name'] }}</div>
                                                     <small class="text-muted"
@@ -180,7 +186,7 @@
                                                                         data-bs-target="#capNhatLichLamViec--{{ $item->schedule_id }}">
 
                                                                         <div class="d-flex align-items-center">
-                                                                            
+
                                                                             <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-2"
                                                                                 style="width: 20px; height: 20px; font-size: 10px;">
                                                                                 <i class="bi bi-person-fill"></i>
@@ -193,8 +199,6 @@
                                                                     </div>
                                                                 @endforeach
                                                             </div>
-                                                        
-                                                           
                                                         @endif
                                                     </td>
                                                 @endforeach
@@ -204,7 +208,7 @@
                                 </table>
                             </div>
 
-                          
+
 
                         </div>
                     </div>
@@ -214,7 +218,8 @@
 
             {{-- Form Tìm kiếm lịch làm việc  --}}
             <div class="px-3 px-md-5">
-                <div class="collapse {{ request()->hasAny(['ten_bac_si', 'search_date', 'caLamViec', 'status']) ? 'show' : '' }}" id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
+                <div class="collapse {{ request()->hasAny(['ten_bac_si', 'search_date', 'caLamViec', 'status']) ? 'show' : '' }}"
+                    id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4 p-md-5">
                             <h3 class="card-title mb-4 border-bottom pb-2">
@@ -230,11 +235,9 @@
                                             placeholder="Gõ để tìm kiếm..." value="{{ request('ten_bac_si') }}"
                                             name="ten_bac_si">
                                         <datalist id="datalistOptions">
-                                            <option value="Đỗ Thành Nhân"></option>
-                                            <option value="Ngô Minh Quý"></option>
-                                            <option value="Nguyễn Cường Đại"></option>
-                                            <option value="La Chí Thành"></option>
-                                            <option value="Nguyễn Thúy Vy"></option>
+                                            @foreach ($doctorList as $doc)
+                                                <option value="{{ $doc->fullname }}"></option>
+                                            @endforeach
                                         </datalist>
                                     </div>
 
@@ -415,11 +418,11 @@
                             </div>
 
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
             {{-- Form Xoa lịch làm việc  --}}
             <div class="px-3 px-md-5">

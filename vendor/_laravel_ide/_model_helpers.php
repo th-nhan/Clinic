@@ -1288,7 +1288,8 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $two_factor_confirmed_at
      * @property string|null $two_factor_recovery_codes
      * @property string|null $two_factor_secret
-     * @property string $password
+     * @property string|null $password
+     * @property string|null $google_id
      * @property string $email
      * @property string $fullname
      * @property int $user_id
@@ -1307,6 +1308,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereFullname($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereGoogleId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTwoFactorSecret($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTwoFactorRecoveryCodes($value)

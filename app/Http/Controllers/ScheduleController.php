@@ -19,9 +19,10 @@ class ScheduleController extends Controller
 
     public function index(Request $request)
     {
+
         // 1. XỬ LÝ THỜI GIAN (TUẦN)
         $weekOffset = (int) $request->get('week', 0);
-        
+
         // Nếu người dùng đang tìm kiếm theo 'search_date', hãy tự động nhảy tới tuần của ngày đó
         if ($request->filled('search_date') && !$request->has('week')) {
             $searchDate = Carbon::parse($request->search_date);
@@ -42,8 +43,8 @@ class ScheduleController extends Controller
             $currentDate->addDay();
         }
 
-        $schedule = Schedule::with(['user','scheduletime'])->get();
-      
+        $schedule = Schedule::with(['user', 'scheduletime'])->get();
+
         $query = Schedule::with(['user', 'scheduletime'])
             ->orderBy('schedule_id', 'desc');
 
@@ -52,7 +53,7 @@ class ScheduleController extends Controller
         $baseQuery = Schedule::with(['user', 'scheduletime']);
 
         // --- ÁP DỤNG BỘ LỌC CHUNG (Cho cả Tuần và Danh sách) ---
-        
+
         // Lọc Bác sĩ
         if ($request->filled('ten_bac_si')) {
             $baseQuery->whereHas('user', function ($q) use ($request) {
@@ -88,13 +89,14 @@ class ScheduleController extends Controller
         // Clone baseQuery tiếp
         $listQuery = $baseQuery->clone()->orderBy('schedule_id', 'desc');
 
-        // Riêng danh sách thì lọc thêm chính xác Ngày (nếu có)
         if ($request->filled('search_date')) {
             $listQuery->where('date', $request->search_date);
         }
-        // Nếu có lọc tháng/năm thì thêm vào đây...
+
 
         $schedule = $listQuery->get();
+
+        $doctorList = User::select('fullname')->distinct()->get();
 
         // 5. TRẢ VỀ VIEW
         return view('QuanLyLichLamViec.index', compact(
@@ -103,7 +105,8 @@ class ScheduleController extends Controller
             'weekDates',
             'startOfWeek',
             'endOfWeek',
-            'weekOffset'
+            'weekOffset',
+            'doctorList'
         ));
     }
 
