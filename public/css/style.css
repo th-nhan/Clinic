@@ -40,6 +40,13 @@
     border-color: #dc3545;
 }
 
+
+#controlButtons .btn.active.btn-outline-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+
 .table-header-colored th {
     background-color: #0d6efd !important;
     color: white !important;

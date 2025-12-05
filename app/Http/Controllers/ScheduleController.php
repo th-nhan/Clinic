@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Schedule;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -19,45 +20,94 @@ class ScheduleController extends Controller
     public function index(Request $request)
     {
 
-        $schedule = Schedule::with(['user','scheduletime'])->get();
-        return view('QuanLyLichLamViec.index', compact('schedule')); 
+        // 1. XỬ LÝ THỜI GIAN (TUẦN)
+        $weekOffset = (int) $request->get('week', 0);
+
+        // Nếu người dùng đang tìm kiếm theo 'search_date', hãy tự động nhảy tới tuần của ngày đó
+        if ($request->filled('search_date') && !$request->has('week')) {
+            $searchDate = Carbon::parse($request->search_date);
+            $startOfWeek = $searchDate->startOfWeek();
+            $endOfWeek   = $searchDate->copy()->endOfWeek();
+            // (Tùy chọn: tính lại weekOffset nếu cần, nhưng để hiển thị thì start/end là đủ)
+        } else {
+            // Mặc định lấy theo tuần hiện tại + offset
+            $startOfWeek = Carbon::now()->startOfWeek()->addWeeks($weekOffset);
+            $endOfWeek   = $startOfWeek->copy()->endOfWeek();
+        }
+
+
+        $weekDates = [];
+        $currentDate = $startOfWeek->copy();
+        while ($currentDate <= $endOfWeek) {
+            $weekDates[] = $currentDate->copy();
+            $currentDate->addDay();
+        }
+
+        $schedule = Schedule::with(['user', 'scheduletime'])->get();
+
         $query = Schedule::with(['user', 'scheduletime'])
             ->orderBy('schedule_id', 'desc');
 
+
+        // 2. KHỞI TẠO QUERY CƠ BẢN (Dùng chung cho cả 2 bảng)
+        $baseQuery = Schedule::with(['user', 'scheduletime']);
+
+        // --- ÁP DỤNG BỘ LỌC CHUNG (Cho cả Tuần và Danh sách) ---
+
+        // Lọc Bác sĩ
         if ($request->filled('ten_bac_si')) {
-            $query->whereHas('user', function ($q) use ($request) {
+            $baseQuery->whereHas('user', function ($q) use ($request) {
                 $q->where('fullname', 'like', '%' . $request->ten_bac_si . '%');
             });
         }
 
+        // Lọc Ca làm việc
+        if ($request->filled('caLamViec')) {
+            $baseQuery->whereIn('schedule_time_id', $request->caLamViec);
+        }
+
+        // Lọc Trạng thái
+        if ($request->filled('status')) {
+            $baseQuery->where('status', $request->status);
+        }
+
+        // 3. LẤY DỮ LIỆU CHO LỊCH TUẦN (GRID VIEW)
+        // Clone baseQuery để không ảnh hưởng query dưới
+        // Lịch tuần thì PHẢI giới hạn trong tuần đó (whereBetween)
+        $weekSchedules = $baseQuery->clone()
+            ->whereBetween('date', [$startOfWeek->format('Y-m-d'), $endOfWeek->format('Y-m-d')])
+            ->where('status', '!=', 'Đã hủy') // Lịch tuần thường không hiện cái đã hủy cho đỡ rối
+            ->get();
+
+        // Gom nhóm dữ liệu tuần
+        $calendarData = [];
+        foreach ($weekSchedules as $sche) {
+            $calendarData[$sche->date][$sche->schedule_time_id][] = $sche;
+        }
+
+        // 4. LẤY DỮ LIỆU CHO DANH SÁCH (LIST VIEW BÊN DƯỚI)
+        // Clone baseQuery tiếp
+        $listQuery = $baseQuery->clone()->orderBy('schedule_id', 'desc');
 
         if ($request->filled('search_date')) {
-            $query->where('date', $request->search_date);
-        } elseif ($request->filled('search_month')) {
-            $parts = explode('-', $request->search_month);
-            if (count($parts) == 2) {
-                $query->whereYear('date', $parts[0])
-                    ->whereMonth('date', $parts[1]);
-            }
-        } elseif ($request->filled('search_year')) {
-            $query->whereYear('date', $request->search_year);
+            $listQuery->where('date', $request->search_date);
         }
 
 
-        if ($request->filled('caLamViec')) {
-            $query->where('schedule_time_id', $request->caLamViec);
-        }
+        $schedule = $listQuery->get();
 
+        $doctorList = User::select('fullname')->distinct()->get();
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-
-        $schedule = $query->get();
-
-
-        return view('QuanLyLichLamViec.index', compact('schedule'));
+        // 5. TRẢ VỀ VIEW
+        return view('QuanLyLichLamViec.index', compact(
+            'schedule',      // Dữ liệu danh sách
+            'calendarData',  // Dữ liệu lịch tuần (Đã được lọc)
+            'weekDates',
+            'startOfWeek',
+            'endOfWeek',
+            'weekOffset',
+            'doctorList'
+        ));
     }
 
     /**
@@ -65,17 +115,6 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'ten_bac_si' => 'required|string',
-            'date'       => 'required|date',
-            'caLamViec'  => 'required',
-            'status'     => 'required',
-        ], [
-            'ten_bac_si.required' => 'Vui lòng chọn bác sĩ.',
-            'date.required'       => 'Vui lòng chọn ngày.',
-        ]);
-
-
         try {
             // 2. Tìm User ID từ tên Bác sĩ
             $doctor = User::where('fullname', $request->ten_bac_si)->first();
@@ -102,9 +141,18 @@ class ScheduleController extends Controller
                 return redirect()->back()->with('error', 'Ca làm việc không hợp lệ.');
             }
             // 4. Kiểm tra trùng lịch (Bác sĩ + Ngày + Ca)
+            $conflictIds = [];
+
+            if ($timeId == 3) {
+                $conflictIds = [1, 2, 3]; 
+            } elseif ($timeId == 1) {
+                $conflictIds = [1, 3];
+            } elseif ($timeId == 2) {
+                $conflictIds = [2, 3];
+            }
             $exists = Schedule::where('user_id', $doctor->user_id)
                 ->where('date', $request->date)
-                ->where('schedule_time_id', $timeId)
+                ->whereIn('schedule_time_id', $conflictIds)
                 ->exists();
 
             if ($exists) {
@@ -244,21 +292,20 @@ class ScheduleController extends Controller
     public function deleteMany(Request $request)
     {
         try {
-            
+
             $idsString = $request->input('ids');
-            
+
             if (empty($idsString)) {
                 return back()->with('error', 'Chưa chọn lịch nào để xóa.');
             }
 
-            
+
             $idsArray = explode(',', $idsString);
 
-            
+
             Schedule::whereIn('schedule_id', $idsArray)->delete();
 
             return back()->with('success', 'Đã xóa ' . count($idsArray) . ' lịch thành công!');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Lỗi xóa nhiều: ' . $e->getMessage());
         }
