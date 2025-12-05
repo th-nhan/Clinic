@@ -37,19 +37,11 @@ class HistoryController extends Controller
     }
 
     public function store(Request $request) {
-        $existingCustomer = Customer::where('contact_number', $request->sodienthoai)->first();
-
-        if ($existingCustomer) {
-              if ($existingCustomer->fullname !== $request->khachhang) {
-                return back()->with('error', 'Số điện thoại này đã tồn tại với khách hàng khác!');
-            }
-            $customer = $existingCustomer;
-        } else {
-            $customer = Customer::create([
-                'fullname' => $request->khachhang,
-                'contact_number' => $request->sodienthoai
-            ]);
-        }
+   
+        $customer = Customer::create([
+            'fullname' => $request->khachhang,
+            'contact_number' => $request->sodienthoai
+        ]);
         $history = history::create([
             'customer_id' => $customer->customer_id,
             'user_id' => $request->bacsi,
@@ -106,11 +98,13 @@ class HistoryController extends Controller
         }
 
         if ($history->invoice) {
-            $total = $history->historyDetails->sum('price');
-            $history->invoice->update([
-                'total_price' => $total,
-                'status' => $request->radioStatus ?? 'unpaid'
-            ]);
+           foreach($history->historyDetails as $hd) {
+                $total = $hd->price;
+                $history->invoice->update([
+                    'total_price' => $total,
+                    'status' => $request->radioStatus ?? 'unpaid'
+                ]);
+           }
         }
 
         return back()->with('success', 'Cập nhật thành công');

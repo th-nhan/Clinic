@@ -7,7 +7,7 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <title>Lịch Sử</title>
 </head>
-@include('QuanLyLichSu.modal')
+@include('QuanLyLichSu.modal.history')
 
 <body class="bg-light">
     @include('component.header')
@@ -77,7 +77,7 @@
 
         <div class="card shadow-sm mb-5">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="text-primary mb-0 fw-bold">Danh sách lịch sử khám</h5>
+                <h5 class="text-primary fw-bold">Danh sách lịch sử khám</h5>
                 <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addHistoryModal">
                     + Thêm mới
                 </button>
@@ -151,7 +151,6 @@
 
 </html>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function updateTime() {
         const timenow = new Date();
@@ -167,6 +166,7 @@
     }
     updateTime();
     setInterval(updateTime, 1000);
+    // search realtime
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("searchName");
         const tableRows = document.querySelectorAll("#historyTable tbody tr");

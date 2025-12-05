@@ -157,7 +157,7 @@
                         <div class="col-md-6">
                             <label>Tổng tiền</label>
                             <input type="number" name="tien" class="form-control"
-                                value="{{ $item->invoice->total_price }}">
+                                value="{{$item->invoice->total_price}}">
                         </div>
                         <div class="row g-1">
                             <label>Dịch vụ</label>
@@ -224,8 +224,6 @@
 @endforeach
 
 
-
-
 <!-- modal details  -->>
 
 @foreach ($histories as $item )
@@ -237,7 +235,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="row g-4 g-4 align-items-center">
+                <div class="row g-4 align-items-center">
                     <div class="col-md-8">
                         <div class="mb-2"><span class="fw-bold">Mã khách hàng: </span>{{ $item->customer_id }}</div>
                         <div class="mb-2"><span class="fw-bold">Tên khách hàng: </span>{{ $item->customer->fullname }}
@@ -293,7 +291,9 @@
                     @if(optional($item->invoice)->status == 'paid')
                     <button class="btn btn-success" disabled> Thanh toán rồi</button>
                     @elseif(optional($item->invoice)->status == 'unpaid')
-                    <span class="btn btn-success">Cần thanh toán</span>
+                    <form action="{{ route('hoadon.show', $item->invoice->invoice_id) }}" method="GET">
+                        <button class="btn btn-success">Cần thanh toán</button>
+                    </form>
                     @endif
                 </button>
             </div>
@@ -301,26 +301,3 @@
     </div>
 </div>
 @endforeach
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll(".service-checkbox");
-        const totalInput = document.querySelector("input[name='tien']");
-
-        function updateTotal() {
-            let total = 0;
-            checkboxes.forEach(cb => {
-                if (cb.checked) {
-                    let min = parseInt(cb.dataset.min);
-                    total += min;
-                }
-            });
-            totalInput.value = total.toLocaleString("vi-VN");
-        }
-
-        checkboxes.forEach(cb => {
-            cb.addEventListener("change", updateTotal);
-        });
-    });
-</script>

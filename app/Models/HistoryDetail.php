@@ -8,7 +8,7 @@ class HistoryDetail extends Model
 {
     use HasFactory;
     public $timestamps = false;
-
+    public $primaryKey = 'history_detail_id';
     protected $fillable = ['history_id', 'service_id','price'];
 
     public function service()
