@@ -63,7 +63,7 @@ class ScheduleController extends Controller
 
         // Lọc Ca làm việc
         if ($request->filled('caLamViec')) {
-            $baseQuery->where('schedule_time_id', $request->caLamViec);
+            $baseQuery->whereIn('schedule_time_id', $request->caLamViec);
         }
 
         // Lọc Trạng thái
@@ -115,17 +115,6 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'ten_bac_si' => 'required|string',
-            'date'       => 'required|date',
-            'caLamViec'  => 'required',
-            'status'     => 'required',
-        ], [
-            'ten_bac_si.required' => 'Vui lòng chọn bác sĩ.',
-            'date.required'       => 'Vui lòng chọn ngày.',
-        ]);
-
-
         try {
             // 2. Tìm User ID từ tên Bác sĩ
             $doctor = User::where('fullname', $request->ten_bac_si)->first();
@@ -152,9 +141,18 @@ class ScheduleController extends Controller
                 return redirect()->back()->with('error', 'Ca làm việc không hợp lệ.');
             }
             // 4. Kiểm tra trùng lịch (Bác sĩ + Ngày + Ca)
+            $conflictIds = [];
+
+            if ($timeId == 3) {
+                $conflictIds = [1, 2, 3]; 
+            } elseif ($timeId == 1) {
+                $conflictIds = [1, 3];
+            } elseif ($timeId == 2) {
+                $conflictIds = [2, 3];
+            }
             $exists = Schedule::where('user_id', $doctor->user_id)
                 ->where('date', $request->date)
-                ->where('schedule_time_id', $timeId)
+                ->whereIn('schedule_time_id', $conflictIds)
                 ->exists();
 
             if ($exists) {

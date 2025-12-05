@@ -57,6 +57,7 @@ class GoogleController extends Controller
 
         } catch (\Exception $e) {
             // Nếu lỗi (ví dụ hủy đăng nhập)
+            dd($e->getMessage());
             return redirect()->route('login')->with('error', 'Đăng nhập Google thất bại, vui lòng thử lại.');
         }
     }

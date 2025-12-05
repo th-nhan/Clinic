@@ -250,7 +250,7 @@
 
                         <div class="col-12">
                             <label for="dateTimePicker" class="form-label fw-bold">Chọn ngày</label>
-                            <input type="date" class="form-control" id="dateTimePicker" name="date">
+                            <input type="date" class="form-control" id="dateTimePicker" name="date" required>
                         </div>
 
                         <div class="col-12">

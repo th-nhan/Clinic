@@ -302,21 +302,21 @@
                                         <label class="form-label fw-bold d-block mb-2">Chọn ca làm việc</label>
                                         <div class="d-flex flex-wrap gap-3">
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="caLamViec"
+                                                <input class="form-check-input" type="checkbox" name="caLamViec[]"
                                                     id="ca1" value="1"
-                                                    {{ request('caLamViec') == '1' ? 'checked' : '' }}>
+                                                    {{ in_array('1', request('caLamViec', [])) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="ca1">Sáng</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="caLamViec"
+                                                <input class="form-check-input" type="checkbox" name="caLamViec[]"
                                                     id="ca2" value="2"
-                                                    {{ request('caLamViec') == '2' ? 'checked' : '' }}>
+                                                    {{ in_array('2', request('caLamViec', [])) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="ca2">Chiều</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="caLamViec"
+                                                <input class="form-check-input" type="checkbox" name="caLamViec[]"
                                                     id="ca3" value="3"
-                                                    {{ request('caLamViec') == '3' ? 'checked' : '' }}>
+                                                    {{ in_array('3', request('caLamViec', [])) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="ca3">Cả ngày</label>
                                             </div>
                                         </div>
