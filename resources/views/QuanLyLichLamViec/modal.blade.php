@@ -325,3 +325,106 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Chinh sua voi xoa --}}
+@foreach ($schedule as $item)
+    <div class="modal fade" id="chiTietLichLamViec--{{ $item->schedule_id }}" tabindex="-1"
+        aria-labelledby="chiTietLichLamViecLabel-{{ $item->schedule_id }}" aria-hidden="true">
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('lich.update', $item->schedule_id) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header bg-info text-white">
+
+                        <h5 class="modal-title" id="capNhatLichLamViecLabel-{{ $item->schedule_id }}">
+                            <i class="bi bi-floppy2-fill text-white p-2"></i>
+                            Cập Nhật Lịch Làm Việc
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label for="doctorDataList-{{ $item->schedule_id }}" class="form-label fw-bold">Chọn
+                                    bác sĩ</label>
+                                <input class="form-control" list="datalistOptions"
+                                    id="doctorDataList-{{ $item->schedule_id }}" placeholder="Gõ để tìm kiếm..."
+                                    name="ten_bac_si" value="{{ $item->user->fullname ?? 'Không có tên' }}" readonly>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="dateTimePicker-{{ $item->schedule_id }}" class="form-label fw-bold">Chọn
+                                    ngày</label>
+                                <input type="date" class="form-control" id="dateTimePicker-{{ $item->schedule_id }}"
+                                    name="date" value="{{ $item->date }}" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold d-block mb-2">Chọn ca làm việc</label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="caLamViec"
+                                            id="ca1-{{ $item->schedule_id }}" value="ca1"
+                                            {{ $item->schedule_time_id == 1 ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="ca1-{{ $item->schedule_id }}">Sáng</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="caLamViec"
+                                            id="ca2-{{ $item->schedule_id }}" value="ca2"
+                                            {{ $item->schedule_time_id == 2 ? 'checked' : '' }}>
+                                        <label class="form-check-label"
+                                            for="ca2-{{ $item->schedule_id }}">Chiều</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="caLamViec"
+                                            id="ca3-{{ $item->schedule_id }}" value="ca3"
+                                            {{ $item->schedule_time_id == 3 ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="ca3-{{ $item->schedule_id }}">Cả
+                                            ngày</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="status-{{ $item->schedule_id }}" class="form-label fw-bold">Tình
+                                    trạng</label>
+
+                                <select class="form-select" aria-label="Tình trạng"
+                                    id="status-{{ $item->schedule_id }}" name="status">
+
+                                    <option value="Đã duyệt" {{ $item->status == 'Đã duyệt' ? 'selected' : '' }}>
+                                        Đã duyệt
+                                    </option>
+
+                                    <option value="Chờ duyệt" {{ $item->status == 'Chờ duyệt' ? 'selected' : '' }}>
+                                        Chờ duyệt
+                                    </option>
+
+                                    <option value="Đã hủy" {{ $item->status == 'Đã hủy' ? 'selected' : '' }}>
+                                        Đã hủy
+                                    </option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer d-flex">
+                        <button type="button" class="btn btn-danger" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#deleteLichLamViecModal-{{ $item->schedule_id }}">
+                            <i class="bi bi-trash"></i> Xóa
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-info">Cập nhật</button>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+@endforeach

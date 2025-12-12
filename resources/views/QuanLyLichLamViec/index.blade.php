@@ -106,10 +106,44 @@
                                     </a>
 
                                     {{-- Hiển thị ngày --}}
-                                    <span class="fw-bold mx-3 text-dark">
-                                        {{ $startOfWeek->format('d/m') }} - {{ $endOfWeek->format('d/m/Y') }}
-                                    </span>
 
+                                    <form id="formChonTuan" action="{{ route('lich.index') }}" method="GET"
+                                        class="d-inline-block">
+                                        <select name="week"
+                                            class="form-select form-select-sm fw-bold border-primary text-primary"
+                                            style="min-width: 280px; cursor: pointer;"
+                                            onchange="document.getElementById('formChonTuan').submit()">
+
+                                            @php
+                                                $todayReal = \Carbon\Carbon::now()->startOfWeek();
+                                                $startOfYear = \Carbon\Carbon::now()->startOfYear()->startOfWeek();
+                                                if ($startOfYear->year < \Carbon\Carbon::now()->year) {
+                                                    $startOfYear = $startOfYear->addWeek();
+                                                }
+                                            @endphp
+
+                                            @for ($i = 0; $i < 53; $i++)
+                                                @php
+                                                    $wStart = $startOfYear->copy()->addWeeks($i);
+                                                    $wEnd = $wStart->copy()->endOfWeek();
+                                                    $offset = $todayReal->diffInWeeks($wStart, false);
+                                                    $label =
+                                                        'Tuần ' .
+                                                        str_pad($i + 1, 2, '0', STR_PAD_LEFT) .
+                                                        ' [Từ ' .
+                                                        $wStart->format('d/m/Y') .
+                                                        ' -- Đến ' .
+                                                        $wEnd->format('d/m/Y') .
+                                                        ']';
+                                                @endphp
+
+                                                <option value="{{ $offset }}"
+                                                    {{ (int) $weekOffset == (int) $offset ? 'selected' : '' }}>
+                                                    {{ $label }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </form>
                                     {{-- Nút Tiến --}}
                                     <a href="{{ route('lich.index', array_merge(request()->all(), ['week' => $weekOffset + 1])) }}"
                                         class="btn btn-outline-primary btn-sm">
@@ -133,7 +167,8 @@
 
                                     <thead class="bg-primary text-white">
                                         <tr>
-                                            <th class="py-3" style="width: 100px; background-color: #0d6efd;">CA</th>
+                                            <th class="py-3" style="width: 100px; background-color: #0d6efd;">CA
+                                            </th>
                                             @foreach ($weekDates as $date)
                                                 <th class="{{ $date->isToday() ? 'bg-warning text-dark' : '' }}">
                                                     <div class="text-uppercase small fw-bold">
@@ -183,13 +218,20 @@
                                                                     <div class="badge bg-{{ $info['bg'] }} bg-opacity-10 text-dark border border-{{ $info['bg'] }} w-100 text-start p-2 shadow-sm"
                                                                         style="cursor: pointer;"
                                                                         data-bs-toggle="modal"
-                                                                        data-bs-target="#capNhatLichLamViec--{{ $item->schedule_id }}">
+                                                                        data-bs-target="#chiTietLichLamViec--{{ $item->schedule_id }}">
 
                                                                         <div class="d-flex align-items-center">
 
                                                                             <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-2"
                                                                                 style="width: 20px; height: 20px; font-size: 10px;">
-                                                                                <i class="bi bi-person-fill"></i>
+                                                                                @if (!empty($item->user->avatar))
+                                                                                    <img src="{{ $item->user->avatar }}"
+                                                                                        alt="avatar"
+                                                                                        class="rounded-circle"
+                                                                                        style="width: 100%; height: 100%; rounded-circle">
+                                                                                @else
+                                                                                    <i class="bi bi-person-fill"></i>
+                                                                                @endif
                                                                             </div>
                                                                             <div class="text-truncate"
                                                                                 style="max-width: 80px;">
