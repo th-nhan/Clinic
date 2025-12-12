@@ -14,7 +14,7 @@ class HistoryController extends Controller
 {
     public function index(Request $request){
 
-        $query = History::with(relations: ['Customer', 'User', 'Invoice', 'historyDetails.service', 'historyDetails']);
+        $query = History::with(relations: ['Customer', 'User', 'historyDetails.service', 'historyDetails']);
 
         if ($request->search_name) {
             $query->whereHas('customer', function($q) use ($request) {
@@ -29,51 +29,63 @@ class HistoryController extends Controller
                 $q->where('service_id', $request->search_service);
             });
         }
-        $histories = $query->get();
+        if ($request->search_status) {
+            $query->whereHas('Invoice', function($q) use ($request) {
+                $q->where('status', $request->search_status);
+            });
+        }
+        $histories = $query->orderBy('history_id', 'ASC')->get();
         $users = User::all();
         $services = Service::all();
+        $invoice = Invoice::all();
         $customers = Customer::all();
-        return view('QuanLyLichSu.index', compact('histories','users','services', 'customers'));
+        return view('QuanLyLichSu.index', compact('histories','users','services', 'customers', 'invoice'));
     }
 
     public function store(Request $request) {
-   
+        $request->validate([
+            'ngaykham' => 'required|date|before_or_equal:today'
+        ]);
         $customer = Customer::create([
-            'fullname' => $request->khachhang,
-            'contact_number' => $request->sodienthoai
+            'contact_number' => $request->sodienthoai,
+            'fullname' => $request->khachhang
         ]);
-        $history = history::create([
-            'customer_id' => $customer->customer_id,
+        $history = History::create([
             'user_id' => $request->bacsi,
+            'customer_id' => $customer->customer_id,
             'date' => $request->ngaykham,
-            'time' => $request->giohen
-        ]);
+            'time' => $request->giohen,
+         ]);
+
         $services = is_array($request->dichvu) ? $request->dichvu : [$request->dichvu];
 
-        foreach ($services as $service_id) {
+        foreach($services as $service_id) {
             $history_detail = HistoryDetail::create([
                 'history_id' => $history->history_id,
                 'service_id' => $service_id,
                 'price' => $request->tien
             ]);
         }
-
+        
         Invoice::create([
-            'history_id'  => $history->history_id,
-            'user_id'     => $request->bacsi,
+            'history_id' => $history->history_id,
+            'user_id' => $request->bacsi,
             'total_price' => $history_detail->price ?? $request->tien,
             'method_payment' => 'momo',
             'status' => $request->radioStatus ?? 'unpaid'
         ]);
 
-        return back()->with('success','Thêm thành công');
+        return back()->with('success', 'Thêm thành công');
+
     }
 
     public function update(Request $request, $id)
     {
         $history = History::findOrFail($id);
         $customer = $history->customer;
-
+        $request->validate([
+        'ngaykham' => 'required|date|before_or_equal:today',
+        ]);
         $customer->update([
             'fullname' => $request->khachhang,
             'contact_number' => $request->sodienthoai
@@ -89,7 +101,7 @@ class HistoryController extends Controller
         HistoryDetail::where('history_id', $id)->delete();
         $services = $request->dichvu ?? [];
         foreach ($services as $service_id) {
-            $service = Service::find($service_id);
+            Service::find($service_id);
             HistoryDetail::create([
                 'history_id' => $id,
                 'service_id' => $service_id,

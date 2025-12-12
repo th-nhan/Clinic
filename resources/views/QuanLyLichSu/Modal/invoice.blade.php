@@ -40,7 +40,7 @@
                             <p class="text-uppercase text-muted mb-0 small">Dịch vụ</p>
                             <p class="fw-semibold text-dark">
                                 @foreach ($invoice->history->historyDetails as $detail)
-                                {{ $detail->service->name }} - {{ number_format($detail->price, 0, ',', '.') }}đ
+                                {{ $detail->service->name }} <br>
                                 @endforeach
                             </p>
                         </div>

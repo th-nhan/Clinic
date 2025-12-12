@@ -47,34 +47,65 @@
             </h2>
             <div id="currentTime" class=" me-3 text-secondary fw-semibold" style="font-size: 16px;"></div>
         </div>
-        <div class="card shadow-sm mb-4 mt-4">
+        <div class="card shadow-sm border-0 mb-4 mt-4">
             <div class="card-body">
-                <div class="fw-bold mb-2 ml-2 text-primary">Tìm kiếm</div>
-                <form class="row g-2" method="GET" action="{{ route('lichsu.index') }}">
-                    <div class="col-md-4">
-                        <div class="position-relative">
-                            <input type="text" id="searchName" class="form-control" name="search_name"
-                                placeholder="Tìm theo tên...">
-                        </div>
-                    </div>
+                <h5 class="text-primary fw-bold mb-3">
+                    Tìm kiếm nhanh theo tên
+                </h5>
+
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-primary text-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" id="searchName" class="form-control"
+                        placeholder="Nhập tên khách hàng để tìm nhanh...">
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm border-0 mb-4 mt-4">
+            <div class="card-body">
+                <h5 class="text-primary fw-bold mb-3">
+                    Bộ lọc nâng cao
+                </h5>
+                <form class="row gy-3 gx-3" method="GET" action="{{ route('lichsu.index') }}">
+
                     <div class="col-md-3">
+                        <label class="form-label fw-semibold">Ngày khám</label>
                         <input class="form-control" type="date" name="search_date">
                     </div>
+
                     <div class="col-md-3">
+                        <label class="form-label fw-semibold">Dịch vụ</label>
                         <select name="search_service" class="form-select">
-                            <option value="">Tất cả dịch vụ</option>
+                            <option value="">Tất cả</option>
                             @foreach($services as $item)
                             <option value="{{ $item->service_id }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100">Tìm kiếm</button>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Trạng thái hóa đơn</label>
+                        <select name="search_status" class="form-select">
+                            <option value="">Tất cả</option>
+                            <option value="paid">Đã thanh toán</option>
+                            <option value="unpaid">Chưa thanh toán</option>
+                        </select>
                     </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="w-100 d-flex gap-2">
+                            <button class="btn btn-primary w-50">
+                                <i class="bi bi-funnel"></i> Lọc
+                            </button>
+                            <a href="{{ route('lichsu.index') }}" class="btn btn-secondary w-50">
+                                <i class="bi bi-arrow-repeat"></i> Reset
+                            </a>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>
-
         <div class="card shadow-sm mb-5">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="text-primary fw-bold">Danh sách lịch sử khám</h5>

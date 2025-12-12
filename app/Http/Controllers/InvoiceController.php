@@ -24,8 +24,8 @@ class InvoiceController extends Controller
                     'Content-Type: application/json',
                     'Content-Length: ' . strlen($data))
             );
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
             //execute post
             $result = curl_exec($ch);
             //close connection
@@ -50,7 +50,7 @@ class InvoiceController extends Controller
         $ipnUrl = "http://127.0.0.1:8000/momo/ipn";
         $requestId = $invoice->invoice_id.time(); 
 
-        $requestType = "payWithATM";
+        $requestType = "payWithMethod";
         $extraData = "";
 
         $rawHash = "accessKey=" . $accessKey .

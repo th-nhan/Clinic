@@ -5,16 +5,20 @@
     <div class="modal fade" id="addHistoryModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
+
                 <div class="modal-header bg-primary text-white">
                     <h5 class="fw-bold">Thêm lịch sử khám</h5>
                     <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
+
                 <div class="modal-body">
+
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label>Khách hàng</label>
                             <input type="text" name="khachhang" class="form-control" required>
                         </div>
+
                         <div class="col-md-6">
                             <label>Số điện thoại khách hàng</label>
                             <input type="text" name="sodienthoai" class="form-control" required>
@@ -31,49 +35,53 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="col-md-3">
                             <label>Ngày khám</label>
-                            <input type="date" name="ngaykham" class="form-control" required>
+                            <input type="date" name="ngaykham" class="form-control" max="{{ date('Y-m-d') }}" required>
                         </div>
+
                         <div class="col-md-3">
                             <label>Giờ hẹn</label>
-                            <input type="time" name="giohen" class="form-control">
+                            <input type="time" name="giohen" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3 align-items-center">
+
                         <div class="col-md-6">
                             <label>Trạng thái</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="radioStatus" id="radioUnpaid"
-                                    value="unpaid">
-                                <label class="form-check-label" for="radioUnpaid">Chưa thanh toán</label>
+                                <input class="form-check-input" type="radio" name="radioStatus" value="unpaid" required>
+                                <label class="form-check-label">Chưa thanh toán</label>
                             </div>
+
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="radioStatus" id="radioPaid"
-                                    value="paid" checked>
-                                <label class="form-check-label" for="radioPaid">Đã thanh toán</label>
+                                <input class="form-check-input" type="radio" name="radioStatus" value="paid" required>
+                                <label class="form-check-label">Đã thanh toán</label>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <label>Tổng tiền</label>
-                            <input type="number" name="tien" class="form-control" placeholder="Nhập tổng tiền">
+                            <input type="number" name="tien" class="form-control" required>
                         </div>
+
                         <div class="row g-1">
-                            <label>Dịch vụ</label>
+                            <label>Dịch vụ (chọn ít nhất 1)</label>
+
                             @foreach($services as $s)
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input service-checkbox" type="checkbox" name="dichvu[]"
-                                        value="{{ $s->service_id }}" data-min="{{ $s->min_price }}"
-                                        data-max="{{ $s->max_price }}">
+                                    <input class="form-check-input" type="checkbox" name="dichvu[]"
+                                        value="{{ $s->service_id }}">
                                     <label class="form-check-label">{{ $s->name }}</label>
                                 </div>
                             </div>
                             @endforeach
                         </div>
-                    </div>
 
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -85,6 +93,7 @@
         </div>
     </div>
 </form>
+
 
 
 <!-- modal update history  -->
