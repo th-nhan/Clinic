@@ -66,19 +66,23 @@
         </div>
         <div class="px-3 px-md-5 mb-5">
             <div class="d-flex flex-wrap gap-2 responsive-btn-group-wrapper" id="controlButtons">
-                <button type="button" class="btn btn-outline-primary" data-bs-target="#themLichLamViecModal"
-                    data-bs-toggle="modal" aria-expanded="false" aria-controls="themLichLamViecModal">
-                    <i class="bi bi-plus-circle"></i> Thêm lịch làm việc
-                </button>
+
                 <button type="button" class="btn btn-outline-warning" data-bs-target="#xemLichLamViec"
                     data-bs-toggle="collapse" aria-expanded="false" aria-controls="xemLichLamViec">
                     Xem lịch làm việc</button>
                 <button type="button" class="btn btn-outline-secondary" data-bs-target="#timKiemLichLamViec"
                     data-bs-toggle="collapse" aria-expanded="false" aria-controls="timKiemLichLamViec">
                     Tìm kiếm</button>
-                <button type="button" class="btn btn-outline-danger" data-bs-target="#xoaLichLamViec"
-                    data-bs-toggle="collapse" aria-expanded="false" aria-controls="xoaLichLamViec">
-                    Xóa</button>
+                @if (auth()->check() && auth()->user()->description === 'Quản trị viên')
+                    <button type="button" class="btn btn-outline-primary" data-bs-target="#themLichLamViecModal"
+                        data-bs-toggle="modal" aria-expanded="false" aria-controls="themLichLamViecModal">
+                        <i class="bi bi-plus-circle"></i> Thêm lịch làm việc
+                    </button>
+
+                    <button type="button" class="btn btn-outline-danger" data-bs-target="#xoaLichLamViec"
+                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="xoaLichLamViec">
+                        Xóa</button>
+                @endif
             </div>
         </div>
 
@@ -86,7 +90,7 @@
 
             {{-- Form Xem lịch làm việc theo tuần --}}
             <div class="px-3 px-md-5">
-                <div class="collapse {{ request()->has('week') || !request()->hasAny(['ten_bac_si', 'search_date', 'status']) ? 'show' : '' }}"
+                <div class="collapse {{ request()->has('week') || !request()->hasAny(['ten_bac_si', 'filter_type', 'search_date', 'status']) ? 'show' : '' }}"
                     id="xemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4">
@@ -115,9 +119,10 @@
                                             onchange="document.getElementById('formChonTuan').submit()">
 
                                             @php
-                                                $todayReal = \Carbon\Carbon::now()->startOfWeek();
-                                                $startOfYear = \Carbon\Carbon::now()->startOfYear()->startOfWeek();
-                                                if ($startOfYear->year < \Carbon\Carbon::now()->year) {
+                                                $yearfilled = \Carbon\Carbon::now();
+                                                $todayReal = $yearfilled->copy()->startOfWeek();
+                                                $startOfYear = $yearfilled->copy()->startOfYear()->startOfWeek();
+                                                if ($startOfYear->year < $yearfilled->year) {
                                                     $startOfYear = $startOfYear->addWeek();
                                                 }
                                             @endphp
@@ -260,7 +265,7 @@
 
             {{-- Form Tìm kiếm lịch làm việc  --}}
             <div class="px-3 px-md-5">
-                <div class="collapse {{ request()->hasAny(['ten_bac_si', 'search_date', 'caLamViec', 'status']) ? 'show' : '' }}"
+                <div class="collapse {{ request()->hasAny(['ten_bac_si', 'filter_type', 'search_date', 'caLamViec', 'status']) ? 'show' : '' }}"
                     id="timKiemLichLamViec" data-bs-parent="#collapseContainer">
                     <div class="card shadow-lg mb-4">
                         <div class="card-body p-4 p-md-5">
@@ -271,6 +276,8 @@
 
                             <form action="{{ route('lich.index') }}" method="GET">
                                 <div class="row g-4">
+
+
                                     <div class="col-md-6 col-lg-4">
                                         <label for="doctorDataList" class="form-label fw-bold">Chọn bác sĩ</label>
                                         <input class="form-control" list="datalistOptions" id="doctorDataList"
@@ -286,10 +293,8 @@
                                     <div class="col-md-6 col-lg-4">
                                         <label class="form-label fw-bold">Thời gian làm việc</label>
 
-
-
                                         @php $type = request('filter_type', 'date'); @endphp
-
+                                        <input type="hidden" name="filter_type" value="{{ $type }}">
                                         <div class="btn-group w-100 mb-2" role="group">
                                             {{-- Nút Ngày --}}
                                             <a href="{{ route('lich.index', ['filter_type' => 'date']) }}"
@@ -311,10 +316,6 @@
                                         </div>
 
 
-                                        <input type="hidden" name="filter_type" value="{{ $type }}">
-
-
-
                                         {{-- Trường hợp 1: Ngày --}}
                                         @if ($type == 'date')
                                             <input type="date" class="form-control" name="search_date"
@@ -331,7 +332,7 @@
                                         @if ($type == 'year')
                                             <select class="form-select" name="search_year">
                                                 <option value="">Chọn năm</option>
-                                                @for ($i = date('Y'); $i >= date('Y') - 5; $i--)
+                                                @for ($i = date('Y') + 1; $i >= date('Y') - 6; $i--)
                                                     <option value="{{ $i }}"
                                                         {{ request('search_year') == $i ? 'selected' : '' }}>
                                                         Năm {{ $i }}
@@ -398,6 +399,14 @@
                                 <i class="bi bi-list-columns-reverse text-primary p-2"></i>
                                 Danh sách lịch làm việc
                             </h3>
+
+
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="fs-5 fw-bold text-secondary me-2">Kết quả tìm kiếm:</span>
+                                <span class="badge rounded-pill bg-danger fs-6 shadow-sm">
+                                    {{ $schedule->count() }} trùng khớp
+                                </span>
+                            </div>
 
                             <div class="table-responsive mt-5">
                                 <table class="table table-striped table-hover text-center align-middle">

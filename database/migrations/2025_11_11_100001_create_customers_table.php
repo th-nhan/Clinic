@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('fullname');
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
-            $table->string('contact_number')->unique();
+            $table->string('contact_number')->unque();
             $table->string('address')->nullable();
             $table->timestamp('createdAt')->useCurrent();
             $table->foreignId('createdBy')->nullable()->constrained('users', 'user_id')->onDelete('set null');

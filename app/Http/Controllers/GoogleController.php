@@ -19,46 +19,47 @@ class GoogleController extends Controller
 
     // 2. Xử lý khi Google gọi lại (Callback)
     public function handleGoogleCallback()
-    {
-        try {
-            // Lấy thông tin user từ Google
-            $googleUser = Socialite::driver('google')->user();
+{
+    try {
+        // Quan trọng: dùng stateless() để tránh lỗi state mismatch
+       $googleUser = Socialite::driver('google')
+            ->setHttpClient(new \GuzzleHttp\Client(['verify' => false])) 
+            ->stateless()
+            ->user();
 
-            // Tìm user trong DB dựa trên google_id
-            $finduser = User::where('google_id', $googleUser->id)->first();
-
-            if ($finduser) {
-                // Nếu đã tồn tại -> Đăng nhập
-                Auth::login($finduser);
-                return redirect()->route('home')->with('success', 'Đăng nhập Google thành công!');
-            } else {
-                // Nếu chưa có google_id, kiểm tra xem email đã tồn tại chưa
-                $existingUser = User::where('email', $googleUser->email)->first();
-
-                if ($existingUser) {
-                    // Email đã có (do đăng ký thường), cập nhật google_id cho user đó
-                    $existingUser->google_id = $googleUser->id;
-                    $existingUser->save();
-                    Auth::login($existingUser);
-                } else {
-                    // Nếu chưa có gì cả -> Tạo tài khoản mới (Đăng ký)
-                    // Lưu ý: Cột tên trong DB của bạn là 'fullname', Google trả về 'name'
-                    $newUser = User::create([
-                        'fullname' => $googleUser->name,
-                        'email' => $googleUser->email,
-                        'google_id' => $googleUser->id,
-                        'password' => Hash::make(Str::random(16)), // Tạo pass ngẫu nhiên để bảo mật
-                    ]);
-                    Auth::login($newUser);
-                }
-
-                return redirect()->route('home')->with('success', 'Đăng ký/Đăng nhập Google thành công!');
-            }
-
-        } catch (\Exception $e) {
-            // Nếu lỗi (ví dụ hủy đăng nhập)
-            dd($e->getMessage());
-            return redirect()->route('login')->with('error', 'Đăng nhập Google thất bại, vui lòng thử lại.');
-        }
+    } catch (\Exception $e) {
+        dd("Google Login Error: " . $e->getMessage());
     }
+
+    // Tìm user theo google_id
+    $findUser = User::where('google_id', $googleUser->id)->first();
+
+    if ($findUser) {
+        Auth::login($findUser);
+        return redirect()->route('home')->with('success', 'Đăng nhập Google thành công!');
+    }
+
+    // Nếu email tồn tại -> cập nhật google_id
+    $existingUser = User::where('email', $googleUser->email)->first();
+
+    if ($existingUser) {
+        $existingUser->google_id = $googleUser->id;
+        $existingUser->save();
+
+        Auth::login($existingUser);
+        return redirect()->route('home');
+    }
+
+    // Tạo user mới
+    $newUser = User::create([
+        'fullname' => $googleUser->name,
+        'email' => $googleUser->email,
+        'google_id' => $googleUser->id,
+        'password' => Hash::make(Str::random(16)),
+    ]);
+
+    Auth::login($newUser);
+    return redirect()->route('home');
+}
+
 }

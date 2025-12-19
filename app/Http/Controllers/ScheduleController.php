@@ -19,6 +19,11 @@ class ScheduleController extends Controller
 
     public function index(Request $request)
     {
+
+        \App\Models\Schedule::where('date', '<', \Carbon\Carbon::now()->toDateString())
+        ->where('status', 'Chờ duyệt')
+        ->update(['status' => 'Đã duyệt']);
+
         $weekOffset = (int) $request->get('week', 0);
 
         if ($request->filled('search_date') && !$request->has('week')) {
@@ -38,10 +43,10 @@ class ScheduleController extends Controller
             $currentDate->addDay();
         }
 
-       
+
         $baseQuery = Schedule::with(['user', 'scheduletime']);
 
-        
+
 
         // Lọc Bác sĩ
         if ($request->filled('ten_bac_si')) {
@@ -60,10 +65,10 @@ class ScheduleController extends Controller
             $baseQuery->where('status', $request->status);
         }
 
-        
+
         $weekSchedules = $baseQuery->clone()
             ->whereBetween('date', [$startOfWeek->format('Y-m-d'), $endOfWeek->format('Y-m-d')])
-            ->where('status', '!=', 'Đã hủy') 
+            ->where('status', '!=', 'Đã hủy')
             ->get();
 
         // Gom nhóm dữ liệu tuần
@@ -79,15 +84,33 @@ class ScheduleController extends Controller
             $listQuery->where('date', $request->search_date);
         }
 
+        if ($request->filled('search_month')) {
+            [$year, $month] = explode('-', $request->search_month);
+
+            $start = Carbon::createFromDate($year, $month, 1)->startOfDay();
+            $end   = Carbon::createFromDate($year, $month, 1)->endOfMonth()->endOfDay();
+
+            $listQuery->whereBetween('date', [$start->toDateString(), $end->toDateString()]);
+        }
+
+        if ($request->filled('search_year')) {
+            $start = Carbon::createFromDate($request->search_year, 1, 1)->startOfDay();
+            $end   = Carbon::createFromDate($request->search_year, 12, 31)->endOfDay();
+            $listQuery->whereBetween('date', [$start->toDateString(), $end->toDateString()]);
+        }
+
 
         $schedule = $listQuery->get();
 
-        $doctorList = User::select('fullname')->distinct()->get();
+        $doctorList = User::select('fullname')
+        ->where('description','like','%'.'Nha sĩ'.'%')
+        ->distinct()
+        ->get();
 
         // 5. TRẢ VỀ VIEW
         return view('QuanLyLichLamViec.index', compact(
-            'schedule',      
-            'calendarData',  
+            'schedule',
+            'calendarData',
             'weekDates',
             'startOfWeek',
             'endOfWeek',
@@ -102,13 +125,13 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         try {
-            
+
             $doctor = User::where('fullname', $request->ten_bac_si)->first();
             if (!$doctor) {
                 return redirect()->back()->with('error', 'Không tìm thấy bác sĩ có tên: ' . $request->ten_bac_si);
             }
 
-            
+
             $timeId = null;
             switch ($request->caLamViec) {
                 case 'ca1':
@@ -126,11 +149,11 @@ class ScheduleController extends Controller
             if (!$timeId) {
                 return redirect()->back()->with('error', 'Ca làm việc không hợp lệ.');
             }
-            
+
             $conflictIds = [];
 
             if ($timeId == 3) {
-                $conflictIds = [1, 2, 3]; 
+                $conflictIds = [1, 2, 3];
             } elseif ($timeId == 1) {
                 $conflictIds = [1, 3];
             } elseif ($timeId == 2) {
@@ -151,7 +174,7 @@ class ScheduleController extends Controller
             if ($request->status == '3') $statusText = 'Đã hủy';
 
             // Lưu vào CSDL
-            
+
             $schedule = new Schedule();
             $schedule->user_id          = $doctor->user_id;
             $schedule->schedule_time_id = $timeId;
@@ -185,7 +208,7 @@ class ScheduleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-       
+
 
         try {
 
@@ -196,13 +219,13 @@ class ScheduleController extends Controller
                 return back()->with('error', 'Không tìm thấy lịch làm việc này.');
             }
 
-            
+
             $doctor = User::where('fullname', $request->ten_bac_si)->first();
             if (!$doctor) {
                 return back()->with('error', 'Không tìm thấy bác sĩ có tên: ' . $request->ten_bac_si);
             }
 
-            
+
             $timeId = null;
             switch ($request->caLamViec) {
                 case 'ca1':
@@ -220,7 +243,7 @@ class ScheduleController extends Controller
             if (!$timeId) {
                 return back()->with('error', 'Ca làm việc không hợp lệ.');
             }
-            
+
             $exists = Schedule::where('user_id', $doctor->user_id)
                 ->where('date', $request->date)
                 ->where('schedule_time_id', $timeId)
@@ -232,12 +255,12 @@ class ScheduleController extends Controller
                 return back()->with('error', 'Lịch làm việc này đã tồn tại.');
             }
 
-            // 5. Lưu vào CSDL
+            //  Lưu vào CSDL
             $schedule->user_id          = $doctor->user_id;
             $schedule->schedule_time_id = $timeId;
             $schedule->date             = $request->date;
             $schedule->status           = $request->status;
-            
+
             $schedule->createdAt        = now();
 
             $schedule->save();

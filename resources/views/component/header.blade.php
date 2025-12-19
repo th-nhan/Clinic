@@ -85,7 +85,7 @@
 
 
                                 <span class="d-block text-muted" style="font-size: 11px;">
-                                    {{ Auth::user()->role ?? 'Thành viên' }}
+                                    {{ Auth::user()->description ?? 'Thành viên' }}
                                 </span>
                             </div>
                         </a>

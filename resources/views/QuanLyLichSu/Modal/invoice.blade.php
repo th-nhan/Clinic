@@ -40,7 +40,7 @@
                             <p class="text-uppercase text-muted mb-0 small">Dịch vụ</p>
                             <p class="fw-semibold text-dark">
                                 @foreach ($invoice->history->historyDetails as $detail)
-                                {{ $detail->service->name }} - {{ number_format($detail->price, 0, ',', '.') }}đ
+                                {{ $detail->service->name }} <br>
                                 @endforeach
                             </p>
                         </div>
@@ -114,7 +114,7 @@
                     </div>
 
                     <img src="{{ $invoice->user->avatar }}" alt="{{ $invoice->user->fullname ?? 'Bác sĩ' }}"
-                        class="rounded-circle mx-auto mb-3 border border-4 border-light shadow-sm"
+                        class="rounded-circle mx-auto mb-3 border-4 border-light shadow-sm"
                         style="width: 100px; height: 100px; object-fit: cover;">
                     <h6 class="fw-bold text-dark mb-1">{{ $invoice->user->fullname ?? 'Bác sĩ' }}</h6>
                     <p class="text-muted small mb-3"> <span class="fw-semibold">Chuyên khoa:</span> {{
