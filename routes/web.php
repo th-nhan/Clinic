@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\UserController;
@@ -38,6 +39,9 @@ Route::apiResource('hoadon', InvoiceController::class);
 //     return App\Models\Service::find($id);
 // });
 Route::get('/lichsu', [HistoryController::class,'index'])->name('lichsu.index');
+
+Route::get('/customers/overview', [CustomerController::class, 'overview']);
+Route::get('/customers/search', [CustomerController::class, 'search']);
 
 Route::delete('/lich/delete-many', [ScheduleController::class, 'deleteMany'])->name('lich.deleteMany');
 Route::apiResource('lich',ScheduleController::class);

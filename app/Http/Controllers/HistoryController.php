@@ -55,6 +55,7 @@ class HistoryController extends Controller
             'customer_id' => $customer->customer_id,
             'date' => $request->ngaykham,
             'time' => $request->giohen,
+            'noted' => $request->ghichu
          ]);
 
         $services = is_array($request->dichvu) ? $request->dichvu : [$request->dichvu];
@@ -95,7 +96,8 @@ class HistoryController extends Controller
             'customer_id' => $customer->customer_id,
             'user_id' => $request->bacsi,
             'date' => $request->ngaykham,
-            'time' => $request->giohen
+            'time' => $request->giohen,
+            'noted' => $request->ghichu
         ]);
 
         HistoryDetail::where('history_id', $id)->delete();

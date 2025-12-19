@@ -11,38 +11,40 @@
                     <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body px-4">
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label>Khách hàng</label>
+                            <label class="fw-bold">Khách hàng: </label>
                             <input type="text" name="khachhang" class="form-control" required>
                         </div>
 
                         <div class="col-md-6">
-                            <label>Số điện thoại khách hàng</label>
+                            <label class="fw-bold">Số điện thoại khách hàng:</label>
                             <input type="text" name="sodienthoai" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label>Bác sĩ</label>
+                            <label class="fw-bold">Bác sĩ: </label>
                             <select name="bacsi" class="form-select" required>
                                 <option value="">Tất cả bác sĩ</option>
                                 @foreach($users as $u)
-                                <option value="{{ $u->user_id }}">{{ $u->fullname }}</option>
+                                @if ($u->description == 'Nha sĩ')
+                                  <option value="{{ $u->user_id }}">{{ $u->fullname }}</option>
+                                @endif
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="col-md-3">
-                            <label>Ngày khám</label>
+                            <label class="fw-bold">Ngày khám: </label>
                             <input type="date" name="ngaykham" class="form-control" max="{{ date('Y-m-d') }}" required>
                         </div>
 
                         <div class="col-md-3">
-                            <label>Giờ hẹn</label>
+                            <label class="fw-bold">Giờ hẹn: </label>
                             <input type="time" name="giohen" class="form-control" required>
                         </div>
                     </div>
@@ -50,7 +52,7 @@
                     <div class="row g-3 mb-3 align-items-center">
 
                         <div class="col-md-6">
-                            <label>Trạng thái</label>
+                            <label class="fw-bold">Trạng thái: </label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="radioStatus" value="unpaid" required>
                                 <label class="form-check-label">Chưa thanh toán</label>
@@ -63,12 +65,12 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label>Tổng tiền</label>
+                            <label class="fw-bold">Tổng tiền: </label>
                             <input type="number" name="tien" class="form-control" required>
                         </div>
 
                         <div class="row g-1">
-                            <label>Dịch vụ (chọn ít nhất 1)</label>
+                            <label class="fw-bold">Dịch vụ (chọn ít nhất 1): </label>
 
                             @foreach($services as $s)
                             <div class="col-6">
@@ -79,6 +81,15 @@
                                 </div>
                             </div>
                             @endforeach
+                        </div>
+
+                        <div class="row g-1">
+                            <label class="fw-bold">Ghi chú: </label>
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"
+                                    name="ghichu"></textarea>
+                                <label for="floatingTextarea">Ghi chú</label>
+                            </div>
                         </div>
 
                     </div>
@@ -109,7 +120,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body px-4">
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label>Khách hàng</label>
@@ -181,7 +192,14 @@
                                 </div>
                             </div>
                             @endforeach
-
+                        </div>
+                        <div class="row g-1">
+                            <label class="fw-bold">Ghi chú: </label>
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"
+                                    name="ghichu"></textarea>
+                                <label for="floatingTextarea">Ghi chú</label>
+                            </div>
                         </div>
                     </div>
 
@@ -279,6 +297,10 @@
                         <div class="mb-2">
                             <span class="fw-bold">Số điện thoại khách hàng: </span>
                             <span> {{ $item->customer->contact_number }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="fw-bold">Ghi chú: </span>
+                            <span> {{ $item->noted }}</span>
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
