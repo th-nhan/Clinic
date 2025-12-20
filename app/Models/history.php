@@ -11,7 +11,7 @@ class History extends Model
     protected $primaryKey = 'history_id';
     protected $table = 'histories';
 
-    protected $fillable = ['customer_id', 'user_id', 'date', 'time'];
+    protected $fillable = ['customer_id', 'user_id', 'date', 'time', 'noted'];
 
     public function invoice()
     {

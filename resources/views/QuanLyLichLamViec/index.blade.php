@@ -453,11 +453,13 @@
                                                     data-id="{{ $item->schedule_id }}">
                                                     Xem
                                                 </button>
+                                                @if(auth()->check() && auth()->user()->description == 'Quản trị viên'   )
                                                 <button class="btn btn-info" data-bs-toggle="modal"
                                                     data-bs-target="#capNhatLichLamViec--{{ $item->schedule_id }}"
                                                     data-id="{{ $item->schedule_id }}">Sửa</button>
                                                 <button class="btn btn-danger" data-bs-toggle="modal"
                                                     data-bs-target="#deleteLichLamViecModal-{{ $item->schedule_id }}">Xóa</button>
+                                                @endif
                                             </td>
 
                                         </tr>

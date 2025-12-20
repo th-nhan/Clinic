@@ -38,7 +38,7 @@
                     <a class="nav-link active" aria-current="page" href="{{ route('home') }}">Trang chủ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Giới thiệu</a>
+                    <a class="nav-link" href="{{ route('home') }}">Giới thiệu</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -60,7 +60,7 @@
                     </ul>
                 </li>
                 <li class="nav-item me-2">
-                    <a class="nav-link" href="#">Liên hệ</a>
+                    <a class="nav-link" href="{{ route('contact.index') }}">Liên hệ</a>
                 </li>
 
             </ul>

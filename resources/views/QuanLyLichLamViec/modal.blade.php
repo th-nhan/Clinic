@@ -414,13 +414,15 @@
                     </div>
 
                     <div class="modal-footer d-flex">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                         @if (auth()->check() && auth()->user()->description === 'Quản trị viên')
                         <button type="button" class="btn btn-danger" 
                             data-bs-toggle="modal" 
                             data-bs-target="#deleteLichLamViecModal-{{ $item->schedule_id }}">
                             <i class="bi bi-trash"></i> Xóa
                         </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <button type="submit" class="btn btn-info">Cập nhật</button>
+                        @endif
                     </div>
                 </form>
                 
